@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+@layer components {
+  .tap {
+    @apply min-h-[44px] active:opacity-70 transition;
+  }
+  .btn {
+    @apply tap inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-medium text-sm;
+  }
+  .btn-primary {
+    @apply btn bg-brand-600 text-white shadow-sm active:bg-brand-700;
+  }
+  .btn-secondary {
+    @apply btn bg-white text-slate-800 border border-slate-200 shadow-sm;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent text-slate-700;
+  }
+  .btn-danger {
+    @apply btn bg-danger-500 text-white;
+  }
+  .input {
+    @apply tap w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500;
+  }
+  .label {
+    @apply block text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1;
+  }
+  .card {
+    @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold;
+  }
+  .chip {
+    @apply tap inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-sm;
+  }
+}
