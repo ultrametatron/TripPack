@@ -57,7 +57,7 @@ export default function SettingsSheet({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <Modal open onClose={onClose} title="Settings" footer={<button className="btn-primary" onClick={onClose}>Done</button>}>
+    <Modal open onClose={onClose} title="You" footer={<button className="btn-primary" onClick={onClose}>Done</button>}>
       <div className="space-y-5">
         <Section title="Appearance">
           <div className="grid grid-cols-3 gap-2">

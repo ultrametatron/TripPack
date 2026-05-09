@@ -155,23 +155,27 @@ export default function CreateTrip() {
             placeholder="City or place"
           />
         </Field>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Start date">
-            <input
-              type="date"
-              className="input"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-          </Field>
-          <Field label="End date">
-            <input
-              type="date"
-              className="input"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </Field>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="min-w-0">
+            <Field label="Start date">
+              <input
+                type="date"
+                className="input"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </Field>
+          </div>
+          <div className="min-w-0">
+            <Field label="End date">
+              <input
+                type="date"
+                className="input"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </Field>
+          </div>
         </div>
 
         <Field label="Trip type">
@@ -190,11 +194,18 @@ export default function CreateTrip() {
           />
         </Field>
 
-        <ToggleField
-          label="Remote work required"
-          value={remoteWorkRequired}
-          onChange={setRemoteWorkRequired}
-        />
+        <div className="grid grid-cols-2 gap-2">
+          <ToggleField
+            label="Remote work"
+            value={remoteWorkRequired}
+            onChange={setRemoteWorkRequired}
+          />
+          <ToggleField
+            label="Gifts / food"
+            value={takingGiftsOrFood}
+            onChange={setTakingGiftsOrFood}
+          />
+        </div>
 
         <Field label="Laundry access">
           <ChipGroup
@@ -216,11 +227,7 @@ export default function CreateTrip() {
                 <button
                   key={v}
                   type="button"
-                  className={`chip ${
-                    selected
-                      ? "bg-brand-50 border-brand-500 text-brand-700 dark:bg-brand-500/20 dark:border-brand-500 dark:text-brand-300"
-                      : "bg-white border-slate-200 text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200"
-                  }`}
+                  className={selected ? "field-chip-on" : "field-chip-off"}
                   onClick={() => toggleActivity(v as Activity)}
                 >
                   {l}
@@ -229,12 +236,6 @@ export default function CreateTrip() {
             })}
           </div>
         </Field>
-
-        <ToggleField
-          label="Taking gifts or food"
-          value={takingGiftsOrFood}
-          onChange={setTakingGiftsOrFood}
-        />
 
         <Field label="Notes">
           <textarea
@@ -277,8 +278,10 @@ function ToggleField({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between card p-3">
-      <span className="text-sm font-medium text-slate-800 dark:text-slate-100">{label}</span>
+    <div className="flex items-center justify-between gap-2 card p-3 min-w-0">
+      <span className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">
+        {label}
+      </span>
       <button
         type="button"
         role="switch"

@@ -132,8 +132,8 @@ function BottomNav({ active }: { active: Route["name"] }) {
           isActive={active === "modules"}
         />
         <Tab
-          label="Settings"
-          icon="⚙️"
+          label="You"
+          icon="👤"
           target={() => navigate({ name: "settings" })}
           isActive={active === "settings"}
         />

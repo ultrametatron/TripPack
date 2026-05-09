@@ -269,11 +269,7 @@ function EditTripModal({
                       prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]
                     )
                   }
-                  className={`chip ${
-                    sel
-                      ? "bg-brand-50 border-brand-500 text-brand-700 dark:bg-brand-500/20 dark:border-brand-500 dark:text-brand-300"
-                      : "bg-white border-slate-200 text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200"
-                  }`}
+                  className={sel ? "field-chip-on" : "field-chip-off"}
                 >
                   {l}
                 </button>

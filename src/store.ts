@@ -220,9 +220,29 @@ interface StoreApi {
 
 const StoreContext = createContext<StoreApi | null>(null);
 
+const SEED_VERSION = 2;
+
 function ensureSeed(state: AppState): AppState {
-  if (state.seeded) return state;
-  return { ...state, modules: [...state.modules, ...buildSeedModules()], seeded: true };
+  const currentVersion = state.seedVersion ?? (state.seeded ? 1 : 0);
+  if (state.seeded && currentVersion >= SEED_VERSION) return state;
+  if (!state.seeded) {
+    return {
+      ...state,
+      modules: [...state.modules, ...buildSeedModules()],
+      seeded: true,
+      seedVersion: SEED_VERSION,
+    };
+  }
+  // Existing user upgrading: only add seed modules whose names aren't present.
+  const existing = new Set(state.modules.map((m) => m.name.toLowerCase()));
+  const additions = buildSeedModules().filter(
+    (m) => !existing.has(m.name.toLowerCase())
+  );
+  return {
+    ...state,
+    modules: [...state.modules, ...additions],
+    seedVersion: SEED_VERSION,
+  };
 }
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {

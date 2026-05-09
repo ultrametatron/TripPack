@@ -1,12 +1,12 @@
 # TripPack
 
-A mobile-first smart packing planner for one traveller. Plan, pack, track
-items during the trip, do return packing, and unpack with confidence.
+Track everything you pack. A mobile-first packing planner that follows the
+whole trip lifecycle: plan, pack, during trip, return pack, and unpack.
 
 > **Heads up:** TripPack is a fully client-side app with no backend or
 > authentication. Each browser keeps its own data. Multiple users visiting the
 > same URL get isolated copies — see [Sharing model](#sharing-model) below. Use
-> **Settings → Export** to back up or move data between devices.
+> **You → Export** to back up or move data between devices.
 
 ## Stack
 
@@ -48,8 +48,8 @@ branch → `gh-pages` / `(root)`** and re-run the workflow.
 
 | Area | What you can do |
 | --- | --- |
-| **Trips** | Create, clone, edit, delete. Cards show progress, critical-missing, lost / unassigned / unresolved counts. |
-| **Modules** | Reusable item bundles. Create / rename / duplicate / delete; per-item editor for qty, category, default bag, journey role, critical, return-expected. Nine seeded by default. |
+| **Trips** | Create, clone, edit, delete. Cards show progress, critical-missing, lost / unassigned / unresolved counts. A "How it works →" link below the tagline opens a 7-step onboarding modal. |
+| **Modules** | Reusable item bundles. Create / rename / duplicate / delete; per-item editor for qty, category, default bag, journey role, critical, return-expected. **Search** at the top of the Modules screen filters by name or description. Twelve seeded by default. |
 | **Lifecycle** | Five tabs per trip: Plan → Pack → During Trip → Return Pack → Unpack / Reset. |
 | **Plan** | Apply one or more modules, add bags (custom names), quick-add items, save the current item list as a new module. |
 | **Pack** | Checklist view with one-tap packed toggle. Filters: All / Unpacked / Critical / Unassigned. Group by bag or category. |
@@ -57,11 +57,11 @@ branch → `gh-pages` / `(root)`** and re-run the workflow.
 | **Return pack** | Distinct mode with sections for Must bring back / Not expected / Bought / Dirty / Lost / Needs bag, each with one-tap actions. |
 | **Unpack** | Mark unpacked / laundry-done / restock-needed; save as module; clear trip. |
 | **Stats** | Per-trip summary cards at the bottom of every tab: packed progress, critical, by bag (mini bars), statuses, top categories, journey roles, return-expected, on-the-trip totals. |
-| **Settings** | Theme toggle (Auto / Light / Dark), JSON Export / Import, Clear all, PIN set / change / remove / forget. |
+| **You** | Bottom-nav tab (`👤`) holding theme toggle (Auto / Light / Dark), JSON Export / Import, Clear all, PIN set / change / remove / forget, plus an About section. |
 
-## Settings
+## "You" tab
 
-Open via the **Settings** tab in the bottom nav. Sections:
+Open via the **You** tab (`👤`) in the bottom nav. Sections:
 
 - **Appearance** — three-state theme (Auto / Light / Dark). Auto follows your
   device's `prefers-color-scheme`. Persisted under
@@ -101,9 +101,24 @@ Local-only. Stored under three keys:
 
 | Key | Contents |
 | --- | --- |
-| `trippack:v1` | App state: trips, bags, items, modules, seeded flag |
+| `trippack:v1` | App state: trips, bags, items, modules, seeded flag, `seedVersion` |
 | `trippack:theme` | `"auto" \| "light" \| "dark"` |
 | `trippack:pin_hash` | SHA-256 hex of the PIN (only present if a PIN is set) |
+
+### Seed migration
+
+`AppState` carries an optional `seedVersion: number`. When new default modules
+ship, bump `SEED_VERSION` in `src/store.ts`. On the next hydrate, existing
+users get the new modules merged in by name (case-insensitive); modules they
+already had are preserved untouched. Caveat: a user who deliberately deleted a
+default module will see it re-added — tracking deleted seeds is overkill for
+the MVP.
+
+To add new defaults in the future:
+
+1. Append to `buildSeedModules()` in `src/seedData.ts`.
+2. Bump `SEED_VERSION` in `src/store.ts`.
+3. Add a CHANGELOG entry.
 
 To reset everything from DevTools:
 
@@ -138,8 +153,9 @@ src/
     ItemRow.tsx              checkbox + status/bag editor
     AddItemBar.tsx           quick-add bar
     PinGate.tsx              keypad lock screen
-    SettingsSheet.tsx        Settings modal (theme, data, PIN)
+    SettingsSheet.tsx        "You" sheet (theme, data, PIN)
     TripStatsCards.tsx       per-trip summary card grid
+    HowItWorks.tsx           7-step onboarding modal
     tabs/
       PlanTab.tsx
       PackTab.tsx

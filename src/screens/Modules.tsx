@@ -20,11 +20,23 @@ export default function Modules() {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [creatingName, setCreatingName] = useState("");
   const [creating, setCreating] = useState(false);
+  const [query, setQuery] = useState("");
 
   const modules = useMemo(
     () => [...state.modules].sort((a, b) => a.name.localeCompare(b.name)),
     [state.modules]
   );
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return q
+      ? modules.filter(
+          (m) =>
+            m.name.toLowerCase().includes(q) ||
+            (m.description && m.description.toLowerCase().includes(q))
+        )
+      : modules;
+  }, [modules, query]);
 
   const openModule = openId ? state.modules.find((m) => m.id === openId) ?? null : null;
 
@@ -43,6 +55,27 @@ export default function Modules() {
         </button>
       </header>
 
+      {modules.length > 0 && (
+        <div className="relative mb-3">
+          <input
+            className="input pr-9"
+            placeholder="Search modules"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          {query.length > 0 && (
+            <button
+              type="button"
+              className="absolute right-2 top-1/2 -translate-y-1/2 tap text-slate-400 dark:text-slate-500 px-2"
+              onClick={() => setQuery("")}
+              aria-label="Clear search"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+      )}
+
       {modules.length === 0 ? (
         <EmptyState
           title="No modules yet"
@@ -53,9 +86,19 @@ export default function Modules() {
             </button>
           }
         />
+      ) : filtered.length === 0 ? (
+        <EmptyState
+          title="No matches"
+          body={`Nothing matched "${query}".`}
+          action={
+            <button className="btn-secondary" onClick={() => setQuery("")}>
+              Clear search
+            </button>
+          }
+        />
       ) : (
         <ul className="space-y-2">
-          {modules.map((m) => (
+          {filtered.map((m) => (
             <li key={m.id} className="card p-3">
               <button className="w-full text-left" onClick={() => setOpenId(m.id)}>
                 <div className="font-semibold text-slate-900 dark:text-slate-100">{m.name}</div>

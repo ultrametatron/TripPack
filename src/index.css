@@ -80,4 +80,13 @@ html.dark body {
   .chip {
     @apply tap inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-sm;
   }
+  .field-chip {
+    @apply inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-sm font-medium transition;
+  }
+  .field-chip-on {
+    @apply field-chip bg-brand-600 border-brand-600 text-white shadow-sm;
+  }
+  .field-chip-off {
+    @apply field-chip bg-slate-100 border-transparent text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200;
+  }
 }
