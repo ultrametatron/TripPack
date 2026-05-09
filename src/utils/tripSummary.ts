@@ -1,4 +1,18 @@
-import type { Item, Trip } from "../types";
+import type {
+  Bag,
+  Category,
+  Item,
+  ItemStatus,
+  JourneyRole,
+  Trip,
+} from "../types";
+
+export interface BagBreakdown {
+  bagId: string;
+  bagName: string;
+  total: number;
+  packed: number;
+}
 
 export interface TripSummary {
   total: number;
@@ -7,44 +21,88 @@ export interface TripSummary {
   lost: number;
   unresolved: number;
   criticalMissing: number;
+  criticalTotal: number;
+  criticalPacked: number;
   bought: number;
   laundry: number;
   broughtBack: number;
   consumables: number;
+  returnExpected: number;
+  notReturning: number;
+  byStatus: Partial<Record<ItemStatus, number>>;
+  byCategory: Partial<Record<Category, number>>;
+  byJourneyRole: Partial<Record<JourneyRole, number>>;
+  byBag: BagBreakdown[];
 }
 
-const PACKED_STATUSES = new Set(["packed", "packed_from_home"]);
+const PACKED_STATUSES = new Set<ItemStatus>(["packed", "packed_from_home"]);
 
-export function summarizeTrip(trip: Trip, items: Item[]): TripSummary {
+export function summarizeTrip(trip: Trip, items: Item[], bags: Bag[] = []): TripSummary {
   const total = items.length;
   let packed = 0;
   let unassigned = 0;
   let lost = 0;
   let criticalMissing = 0;
+  let criticalTotal = 0;
+  let criticalPacked = 0;
   let bought = 0;
   let laundry = 0;
   let broughtBack = 0;
   let consumables = 0;
+  let returnExpected = 0;
+  let notReturning = 0;
+
+  const byStatus: Partial<Record<ItemStatus, number>> = {};
+  const byCategory: Partial<Record<Category, number>> = {};
+  const byJourneyRole: Partial<Record<JourneyRole, number>> = {};
+  const bagMap: Record<string, BagBreakdown> = {};
+  for (const b of bags) {
+    bagMap[b.id] = { bagId: b.id, bagName: b.name, total: 0, packed: 0 };
+  }
+  const unassignedBreakdown: BagBreakdown = {
+    bagId: "",
+    bagName: "Unassigned",
+    total: 0,
+    packed: 0,
+  };
+
   for (const i of items) {
-    if (PACKED_STATUSES.has(i.status)) packed++;
+    const isPacked = PACKED_STATUSES.has(i.status);
+    if (isPacked) packed++;
     if (!i.bagId && i.status !== "consumed" && i.status !== "thrown_away") unassigned++;
     if (i.status === "lost_unaccounted_for") lost++;
-    if (i.critical && !PACKED_STATUSES.has(i.status) && i.status !== "brought_back") {
-      criticalMissing++;
+    if (i.critical) {
+      criticalTotal++;
+      if (isPacked || i.status === "brought_back") criticalPacked++;
+      else criticalMissing++;
     }
     if (i.status === "bought_during_trip") bought++;
     if (i.status === "laundry_dirty") laundry++;
     if (i.status === "brought_back") broughtBack++;
     if (i.journeyRole === "consumable") consumables++;
+    if (i.returnExpected) returnExpected++;
+    else notReturning++;
+
+    byStatus[i.status] = (byStatus[i.status] ?? 0) + 1;
+    byCategory[i.category] = (byCategory[i.category] ?? 0) + 1;
+    byJourneyRole[i.journeyRole] = (byJourneyRole[i.journeyRole] ?? 0) + 1;
+
+    if (i.bagId && bagMap[i.bagId]) {
+      bagMap[i.bagId].total++;
+      if (isPacked) bagMap[i.bagId].packed++;
+    } else if (!i.bagId) {
+      unassignedBreakdown.total++;
+      if (isPacked) unassignedBreakdown.packed++;
+    }
   }
-  // Return packing issues = items expected back but not yet brought back during return phase
-  // We compute a generic "unresolved" indicator counting return-expected items not in a
-  // resolved end state.
+
+  const byBag: BagBreakdown[] = [...Object.values(bagMap)];
+  if (unassignedBreakdown.total > 0) byBag.push(unassignedBreakdown);
+  byBag.sort((a, b) => b.total - a.total);
+
   const returnIssues = items.filter(
     (i) => i.returnExpected && i.status !== "brought_back" && i.status !== "lost_unaccounted_for"
   ).length;
-
-  // Unresolved combines lost + unassigned + (return issues only when in return/unpack phase).
   const unresolved =
     lost +
     unassigned +
@@ -57,10 +115,18 @@ export function summarizeTrip(trip: Trip, items: Item[]): TripSummary {
     lost,
     unresolved,
     criticalMissing,
+    criticalTotal,
+    criticalPacked,
     bought,
     laundry,
     broughtBack,
     consumables,
+    returnExpected,
+    notReturning,
+    byStatus,
+    byCategory,
+    byJourneyRole,
+    byBag,
   };
 }
 

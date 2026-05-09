@@ -9,11 +9,11 @@ export function Badge({
   tone?: "neutral" | "ok" | "warn" | "danger" | "brand";
 }) {
   const tones: Record<string, string> = {
-    neutral: "bg-slate-100 text-slate-700",
-    ok: "bg-ok-100 text-ok-600",
-    warn: "bg-warn-100 text-warn-600",
-    danger: "bg-danger-100 text-danger-600",
-    brand: "bg-brand-100 text-brand-700",
+    neutral: "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200",
+    ok: "bg-ok-100 text-ok-600 dark:bg-ok-500/20 dark:text-ok-500",
+    warn: "bg-warn-100 text-warn-600 dark:bg-warn-500/20 dark:text-warn-500",
+    danger: "bg-danger-100 text-danger-600 dark:bg-danger-500/20 dark:text-danger-500",
+    brand: "bg-brand-100 text-brand-700 dark:bg-brand-500/20 dark:text-brand-300",
   };
   return <span className={`badge ${tones[tone]}`}>{children}</span>;
 }
@@ -67,18 +67,18 @@ export function Modal({
       onClick={onClose}
     >
       <div
-        className="w-full sm:max-w-md bg-white rounded-t-2xl sm:rounded-2xl shadow-xl max-h-[90vh] overflow-hidden flex flex-col"
+        className="w-full sm:max-w-md bg-white rounded-t-2xl sm:rounded-2xl shadow-xl max-h-[90vh] overflow-hidden flex flex-col dark:bg-slate-900"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-          <h2 className="font-semibold text-slate-900">{title}</h2>
-          <button className="tap text-slate-500 px-2" onClick={onClose} aria-label="Close">
+        <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between dark:border-slate-700">
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">{title}</h2>
+          <button className="tap text-slate-500 px-2 dark:text-slate-400" onClick={onClose} aria-label="Close">
             ✕
           </button>
         </div>
         <div className="px-4 py-3 overflow-y-auto">{children}</div>
         {footer && (
-          <div className="px-4 py-3 border-t border-slate-100 bg-slate-50 flex gap-2 justify-end">
+          <div className="px-4 py-3 border-t border-slate-100 bg-slate-50 flex gap-2 justify-end dark:border-slate-700 dark:bg-slate-900">
             {footer}
           </div>
         )}
@@ -98,8 +98,8 @@ export function EmptyState({
 }) {
   return (
     <div className="card p-6 text-center">
-      <div className="text-base font-semibold text-slate-900">{title}</div>
-      {body && <div className="text-sm text-slate-500 mt-1">{body}</div>}
+      <div className="text-base font-semibold text-slate-900 dark:text-slate-100">{title}</div>
+      {body && <div className="text-sm text-slate-500 mt-1 dark:text-slate-400">{body}</div>}
       {action && <div className="mt-3">{action}</div>}
     </div>
   );
@@ -115,10 +115,10 @@ export function SectionHeader({
   tone?: "warn" | "danger" | "ok" | "neutral";
 }) {
   const tones: Record<string, string> = {
-    warn: "text-warn-600",
-    danger: "text-danger-600",
-    ok: "text-ok-600",
-    neutral: "text-slate-700",
+    warn: "text-warn-600 dark:text-warn-500",
+    danger: "text-danger-600 dark:text-danger-500",
+    ok: "text-ok-600 dark:text-ok-500",
+    neutral: "text-slate-700 dark:text-slate-300",
   };
   return (
     <div className="flex items-center justify-between mb-2 mt-4 first:mt-0">
@@ -126,7 +126,7 @@ export function SectionHeader({
         {title}
       </h3>
       {typeof count === "number" && (
-        <span className="text-xs text-slate-500 font-medium">{count}</span>
+        <span className="text-xs text-slate-500 font-medium dark:text-slate-400">{count}</span>
       )}
     </div>
   );
@@ -135,7 +135,7 @@ export function SectionHeader({
 export function ProgressBar({ value, max }: { value: number; max: number }) {
   const pct = max === 0 ? 0 : Math.round((value / max) * 100);
   return (
-    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden dark:bg-slate-700">
       <div
         className="h-full bg-brand-500 transition-all"
         style={{ width: `${pct}%` }}

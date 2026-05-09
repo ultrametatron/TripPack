@@ -98,13 +98,13 @@ export default function DuringTripTab({
               <li key={item.id} className="card p-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <div className="font-medium text-slate-900 truncate">
+                    <div className="font-medium text-slate-900 truncate dark:text-slate-100">
                       {item.name}
                       {item.quantity > 1 && (
-                        <span className="ml-1 text-slate-400 font-normal">×{item.quantity}</span>
+                        <span className="ml-1 text-slate-400 font-normal dark:text-slate-500">×{item.quantity}</span>
                       )}
                     </div>
-                    <div className="text-xs text-slate-500 truncate">
+                    <div className="text-xs text-slate-500 truncate dark:text-slate-400">
                       {bags.find((b) => b.id === item.bagId)?.name ?? "Unassigned"}
                     </div>
                   </div>
@@ -124,7 +124,7 @@ export default function DuringTripTab({
                         className={`chip text-xs ${
                           active
                             ? "bg-brand-600 border-brand-600 text-white"
-                            : "bg-white border-slate-200 text-slate-700"
+                            : "bg-white border-slate-200 text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200"
                         }`}
                         onClick={() => setItemStatus(item.id, q.value)}
                       >
@@ -133,7 +133,7 @@ export default function DuringTripTab({
                     );
                   })}
                   <button
-                    className="chip text-xs bg-white border-slate-200"
+                    className="chip text-xs bg-white border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200"
                     onClick={() => setMovingItemId(item.id)}
                   >
                     Move bag
@@ -285,8 +285,8 @@ function FilterChip<T extends string>({
     <button
       className={`chip whitespace-nowrap ${
         active
-          ? "bg-brand-50 border-brand-500 text-brand-700"
-          : "bg-white border-slate-200 text-slate-700"
+          ? "bg-brand-50 border-brand-500 text-brand-700 dark:bg-brand-500/20 dark:border-brand-500 dark:text-brand-300"
+          : "bg-white border-slate-200 text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200"
       }`}
       onClick={() => onSelect(v)}
     >

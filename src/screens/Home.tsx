@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useStore } from "../store";
-import { navigate } from "../App";
+import { navigate, ThemeToggle } from "../App";
 import { ProgressBar, EmptyState, Modal, Badge } from "../components/ui";
 import { TRIP_TYPE_LABEL, PHASE_LABEL } from "../types";
 import { formatDateRange, summarizeTrip, tripDurationDays } from "../utils/tripSummary";
@@ -15,14 +15,17 @@ export default function Home() {
 
   return (
     <div className="px-4 pt-4">
-      <header className="flex items-center justify-between mb-3">
-        <div>
+      <header className="flex items-center justify-between mb-3 gap-2">
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold tracking-tight">TripPack</h1>
-          <p className="text-sm text-slate-500">Smart packing for solo trips.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Smart packing for solo trips.</p>
         </div>
-        <button className="btn-primary" onClick={() => navigate({ name: "create" })}>
-          + New trip
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <button className="btn-primary" onClick={() => navigate({ name: "create" })}>
+            + New
+          </button>
+        </div>
       </header>
 
       {trips.length === 0 ? (
@@ -49,10 +52,10 @@ export default function Home() {
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <div className="font-semibold text-base text-slate-900 truncate">
+                      <div className="font-semibold text-base text-slate-900 truncate dark:text-slate-100">
                         {trip.name || "Untitled trip"}
                       </div>
-                      <div className="text-sm text-slate-500 truncate">
+                      <div className="text-sm text-slate-500 truncate dark:text-slate-400">
                         {trip.destination || "No destination"}
                         {(trip.startDate || trip.endDate) && (
                           <span> · {formatDateRange(trip.startDate, trip.endDate)}</span>
@@ -68,12 +71,12 @@ export default function Home() {
                     {trip.takingGiftsOrFood && <Badge tone="neutral">Gifts / food</Badge>}
                   </div>
                   <div className="mt-3">
-                    <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+                    <div className="flex items-center justify-between text-xs text-slate-500 mb-1 dark:text-slate-400">
                       <span>
                         {s.packed} / {s.total} packed
                       </span>
                       {s.criticalMissing > 0 && (
-                        <span className="text-danger-600 font-semibold">
+                        <span className="text-danger-600 font-semibold dark:text-danger-500">
                           {s.criticalMissing} critical missing
                         </span>
                       )}
@@ -88,7 +91,7 @@ export default function Home() {
                     </div>
                   </div>
                 </button>
-                <div className="mt-3 flex gap-2 justify-end border-t border-slate-100 pt-3">
+                <div className="mt-3 flex gap-2 justify-end border-t border-slate-100 pt-3 dark:border-slate-700">
                   <button
                     className="btn-ghost"
                     onClick={() => {
@@ -144,7 +147,7 @@ export default function Home() {
           placeholder="Trip name"
           autoFocus
         />
-        <p className="text-xs text-slate-500 mt-2">
+        <p className="text-xs text-slate-500 mt-2 dark:text-slate-400">
           Bags and items are copied; statuses reset to planned.
         </p>
       </Modal>
@@ -172,7 +175,7 @@ export default function Home() {
           </>
         }
       >
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-slate-600 dark:text-slate-300">
           This permanently removes the trip and all its items and bags.
         </p>
       </Modal>

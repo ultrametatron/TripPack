@@ -213,6 +213,9 @@ interface StoreApi {
   duplicateModule(moduleId: string): void;
   applyModulesToTrip(tripId: string, moduleIds: string[]): number;
   saveTripAsModule(tripId: string, name: string, description: string): Module | null;
+  // bulk
+  replaceAll(state: AppState): void;
+  clearAll(): void;
 }
 
 const StoreContext = createContext<StoreApi | null>(null);
@@ -382,6 +385,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         }
         if (newItems.length) dispatch({ type: "BULK_ADD_ITEMS", items: newItems });
         return newItems.length;
+      },
+      replaceAll(next) {
+        dispatch({ type: "HYDRATE", payload: ensureSeed(next) });
+      },
+      clearAll() {
+        dispatch({ type: "HYDRATE", payload: ensureSeed({ ...initial }) });
       },
       saveTripAsModule(tripId, name, description) {
         const tripItems = state.items.filter((i) => i.tripId === tripId);

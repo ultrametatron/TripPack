@@ -36,7 +36,7 @@ export default function Modules() {
             ← Trips
           </button>
           <h1 className="text-xl font-bold">Modules</h1>
-          <p className="text-sm text-slate-500">Reusable groups of items.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Reusable groups of items.</p>
         </div>
         <button className="btn-primary" onClick={() => setCreating(true)}>
           + New
@@ -58,15 +58,15 @@ export default function Modules() {
           {modules.map((m) => (
             <li key={m.id} className="card p-3">
               <button className="w-full text-left" onClick={() => setOpenId(m.id)}>
-                <div className="font-semibold text-slate-900">{m.name}</div>
+                <div className="font-semibold text-slate-900 dark:text-slate-100">{m.name}</div>
                 {m.description && (
-                  <div className="text-xs text-slate-500 mt-0.5">{m.description}</div>
+                  <div className="text-xs text-slate-500 mt-0.5 dark:text-slate-400">{m.description}</div>
                 )}
-                <div className="text-xs text-slate-400 mt-1">
+                <div className="text-xs text-slate-400 mt-1 dark:text-slate-500">
                   {m.defaultItems.length} item{m.defaultItems.length === 1 ? "" : "s"}
                 </div>
               </button>
-              <div className="mt-2 flex gap-2 justify-end border-t border-slate-100 pt-2">
+              <div className="mt-2 flex gap-2 justify-end border-t border-slate-100 pt-2 dark:border-slate-700">
                 <button className="btn-ghost" onClick={() => duplicateModule(m.id)}>
                   Duplicate
                 </button>
@@ -146,7 +146,7 @@ export default function Modules() {
           </>
         }
       >
-        <p className="text-sm text-slate-600">This cannot be undone.</p>
+        <p className="text-sm text-slate-600 dark:text-slate-300">This cannot be undone.</p>
       </Modal>
 
       {openModule && (
@@ -233,7 +233,7 @@ function ModuleEditor({
         </div>
 
         {items.length === 0 ? (
-          <p className="text-sm text-slate-500">No items yet.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">No items yet.</p>
         ) : (
           <ul className="space-y-2">
             {items.map((it) => (
@@ -256,13 +256,13 @@ function ModuleEditor({
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="min-w-0">
-                        <div className="font-medium text-slate-900 truncate">
+                        <div className="font-medium text-slate-900 truncate dark:text-slate-100">
                           {it.name}{" "}
                           {it.quantity > 1 && (
-                            <span className="text-slate-400 font-normal">×{it.quantity}</span>
+                            <span className="text-slate-400 font-normal dark:text-slate-500">×{it.quantity}</span>
                           )}
                         </div>
-                        <div className="text-xs text-slate-500 mt-0.5">
+                        <div className="text-xs text-slate-500 mt-0.5 dark:text-slate-400">
                           {CATEGORY_LABEL[it.category]}
                           {it.defaultBagType && ` · ${BAG_TYPE_LABEL[it.defaultBagType]}`}
                           {` · ${JOURNEY_LABEL[it.journeyRole]}`}
@@ -270,10 +270,10 @@ function ModuleEditor({
                       </div>
                       <div className="flex flex-col items-end gap-1 shrink-0">
                         {it.critical && (
-                          <span className="badge bg-danger-100 text-danger-600">Critical</span>
+                          <span className="badge bg-danger-100 text-danger-600 dark:bg-danger-500/20 dark:text-danger-500">Critical</span>
                         )}
                         {!it.returnExpected && (
-                          <span className="badge bg-slate-100 text-slate-600">No return</span>
+                          <span className="badge bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">No return</span>
                         )}
                       </div>
                     </div>

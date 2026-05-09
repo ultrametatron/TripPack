@@ -65,7 +65,7 @@ export default function CreateTrip() {
             ← Trips
           </button>
           <h1 className="text-xl font-bold">Apply modules</h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Pick modules to seed your packing list. You can edit everything afterwards.
           </p>
         </header>
@@ -88,15 +88,15 @@ export default function CreateTrip() {
                   />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-slate-900">{m.name}</span>
+                      <span className="font-semibold text-slate-900 dark:text-slate-100">{m.name}</span>
                       {recommendedHere && (
-                        <span className="badge bg-brand-100 text-brand-700">Recommended</span>
+                        <span className="badge bg-brand-100 text-brand-700 dark:bg-brand-500/20 dark:text-brand-300">Recommended</span>
                       )}
                     </div>
                     {m.description && (
-                      <div className="text-xs text-slate-500 mt-0.5">{m.description}</div>
+                      <div className="text-xs text-slate-500 mt-0.5 dark:text-slate-400">{m.description}</div>
                     )}
-                    <div className="text-xs text-slate-400 mt-1">
+                    <div className="text-xs text-slate-400 mt-1 dark:text-slate-500">
                       {m.defaultItems.length} item{m.defaultItems.length === 1 ? "" : "s"}
                     </div>
                   </div>
@@ -218,8 +218,8 @@ export default function CreateTrip() {
                   type="button"
                   className={`chip ${
                     selected
-                      ? "bg-brand-50 border-brand-500 text-brand-700"
-                      : "bg-white border-slate-200 text-slate-700"
+                      ? "bg-brand-50 border-brand-500 text-brand-700 dark:bg-brand-500/20 dark:border-brand-500 dark:text-brand-300"
+                      : "bg-white border-slate-200 text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200"
                   }`}
                   onClick={() => toggleActivity(v as Activity)}
                 >
@@ -278,14 +278,14 @@ function ToggleField({
 }) {
   return (
     <div className="flex items-center justify-between card p-3">
-      <span className="text-sm font-medium text-slate-800">{label}</span>
+      <span className="text-sm font-medium text-slate-800 dark:text-slate-100">{label}</span>
       <button
         type="button"
         role="switch"
         aria-checked={value}
         onClick={() => onChange(!value)}
         className={`tap relative w-12 h-7 rounded-full transition-colors ${
-          value ? "bg-brand-500" : "bg-slate-300"
+          value ? "bg-brand-500" : "bg-slate-300 dark:bg-slate-700"
         }`}
       >
         <span

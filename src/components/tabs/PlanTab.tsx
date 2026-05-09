@@ -65,7 +65,7 @@ export default function PlanTab({ trip, bags, items }: { trip: Trip; bags: Bag[]
           )}
           <div className="space-y-2">
             {list.length === 0 ? (
-              <p className="text-xs text-slate-500">No items.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">No items.</p>
             ) : (
               list.map((it) => <ItemRow key={it.id} item={it} bags={bags} />)
             )}
@@ -122,8 +122,8 @@ export default function PlanTab({ trip, bags, items }: { trip: Trip; bags: Bag[]
                     }
                   />
                   <div>
-                    <div className="font-medium text-slate-900">{m.name}</div>
-                    <div className="text-xs text-slate-500">
+                    <div className="font-medium text-slate-900 dark:text-slate-100">{m.name}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">
                       {m.defaultItems.length} item{m.defaultItems.length === 1 ? "" : "s"}
                     </div>
                   </div>
@@ -225,7 +225,7 @@ export default function PlanTab({ trip, bags, items }: { trip: Trip; bags: Bag[]
           onChange={(e) => setModuleName(e.target.value)}
           autoFocus
         />
-        <p className="text-xs text-slate-500 mt-2">
+        <p className="text-xs text-slate-500 mt-2 dark:text-slate-400">
           Items become defaults for future trips. Statuses and bag IDs aren't copied.
         </p>
       </Modal>

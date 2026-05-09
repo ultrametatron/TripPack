@@ -51,7 +51,11 @@ export function ItemRow({
   return (
     <div
       className={`card p-3 ${
-        isLost ? "border-danger-500/60 bg-danger-50/40" : isCriticalMissing ? "border-warn-500/60 bg-warn-50/40" : ""
+        isLost
+          ? "border-danger-500/60 bg-danger-50/40 dark:bg-danger-500/10 dark:border-danger-500/40"
+          : isCriticalMissing
+          ? "border-warn-500/60 bg-warn-50/40 dark:bg-warn-500/10 dark:border-warn-500/40"
+          : ""
       }`}
     >
       <div className="flex items-start gap-3">
@@ -62,7 +66,7 @@ export function ItemRow({
             className={`mt-0.5 h-6 w-6 rounded-md border-2 flex items-center justify-center shrink-0 ${
               isPacked
                 ? "bg-ok-500 border-ok-500 text-white"
-                : "bg-white border-slate-300 text-transparent"
+                : "bg-white border-slate-300 text-transparent dark:bg-slate-800 dark:border-slate-600"
             }`}
             aria-label={isPacked ? "Mark not packed" : "Mark packed"}
           >
@@ -97,13 +101,13 @@ export function ItemRow({
                   className="text-left w-full"
                   onClick={() => expandable && setOpen((o) => !o)}
                 >
-                  <div className="font-medium text-slate-900 truncate">
+                  <div className="font-medium text-slate-900 truncate dark:text-slate-100">
                     {item.name}
                     {item.quantity > 1 && (
-                      <span className="ml-1 text-slate-400 font-normal">×{item.quantity}</span>
+                      <span className="ml-1 text-slate-400 font-normal dark:text-slate-500">×{item.quantity}</span>
                     )}
                   </div>
-                  <div className="text-xs text-slate-500 mt-0.5 truncate">
+                  <div className="text-xs text-slate-500 mt-0.5 truncate dark:text-slate-400">
                     {bag ? bag.name : "Unassigned"}
                   </div>
                 </button>
@@ -116,7 +120,7 @@ export function ItemRow({
           </div>
 
           {open && expandable && (
-            <div className="mt-3 space-y-2 border-t border-slate-100 pt-3">
+            <div className="mt-3 space-y-2 border-t border-slate-100 pt-3 dark:border-slate-700">
               <div className="flex flex-wrap gap-2 text-xs">
                 <Badge tone={JOURNEY_TONE[item.journeyRole]}>
                   {JOURNEY_LABEL[item.journeyRole]}
