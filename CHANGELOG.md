@@ -5,6 +5,17 @@ All notable changes to TripPack are documented here. Newest entries first.
 The project does not yet publish versioned releases — entries are grouped by
 the commit batch (and date) that introduced them.
 
+## 2026-05-09 — Iteration 2: dates, toggles, How-it-works prominence
+
+Smaller follow-up after live-testing on a phone.
+
+### Changed
+- **Date inputs** in Create Trip now stack vertically on mobile (`grid-cols-1 sm:grid-cols-2`) and use `gap-3`. Eliminates the overlapping-border look reported on phones; iOS Safari date inputs render naturally at full width.
+- **Remote work / Gifts toggle cards** are slimmer:
+  - The whole row is now the click target (single `<button role="switch">`), so the inline toggle indicator can be smaller (w-9 h-5 instead of w-12 h-7) and no longer needs the 44px `.tap` height.
+  - Tighter shell: `rounded-xl border px-3 py-2` instead of `card p-3` (which was rounded-2xl). Reads as a control, not a chunky card.
+- **"How it works" link** on Home is now a prominent pill button (`💡 New here? See how it works →`) with `text-sm`, bold weight, brand fill, and proper margin. Visible at a glance instead of hiding as `text-xs`.
+
 ## 2026-05-09 — Cosmetic polish, three new modules, modules search, "You" tab, How-it-works onboarding
 
 Round of polish on top of the previous post-MVP feature batch.

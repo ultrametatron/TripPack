@@ -33,10 +33,12 @@ export default function Home() {
           </div>
         </div>
         <button
-          className="mt-1 text-xs font-medium text-brand-600 dark:text-brand-300 hover:underline underline-offset-2"
+          className="mt-3 inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold bg-brand-50 text-brand-700 border border-brand-100 active:opacity-70 dark:bg-brand-500/15 dark:text-brand-200 dark:border-brand-500/30"
           onClick={() => setShowHelp(true)}
         >
-          How it works →
+          <span aria-hidden>💡</span>
+          New here? See how it works
+          <span aria-hidden>→</span>
         </button>
       </header>
 
