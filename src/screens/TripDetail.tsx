@@ -15,6 +15,7 @@ import PackTab from "../components/tabs/PackTab";
 import DuringTripTab from "../components/tabs/DuringTripTab";
 import ReturnPackTab from "../components/tabs/ReturnPackTab";
 import UnpackTab from "../components/tabs/UnpackTab";
+import TripStatsCards from "../components/TripStatsCards";
 
 const PHASES: LifecyclePhase[] = ["plan", "pack", "during", "return", "unpack"];
 
@@ -35,7 +36,7 @@ export default function TripDetail({ tripId }: { tripId: string }) {
     );
   }
   const { trip, bags, items } = data;
-  const summary = summarizeTrip(trip, items);
+  const summary = summarizeTrip(trip, items, bags);
   const days = tripDurationDays(trip.startDate, trip.endDate);
 
   return (
@@ -47,7 +48,7 @@ export default function TripDetail({ tripId }: { tripId: string }) {
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <h1 className="text-xl font-bold truncate">{trip.name}</h1>
-            <div className="text-sm text-slate-500 truncate">
+            <div className="text-sm text-slate-500 truncate dark:text-slate-400">
               {trip.destination}
               {(trip.startDate || trip.endDate) && (
                 <span> · {formatDateRange(trip.startDate, trip.endDate)}</span>
@@ -66,12 +67,12 @@ export default function TripDetail({ tripId }: { tripId: string }) {
         </div>
 
         <div className="mt-3">
-          <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+          <div className="flex items-center justify-between text-xs text-slate-500 mb-1 dark:text-slate-400">
             <span>
               {summary.packed} / {summary.total} packed
             </span>
             {summary.criticalMissing > 0 && (
-              <span className="text-danger-600 font-semibold">
+              <span className="text-danger-600 font-semibold dark:text-danger-500">
                 {summary.criticalMissing} critical missing
               </span>
             )}
@@ -99,6 +100,8 @@ export default function TripDetail({ tripId }: { tripId: string }) {
         {trip.currentPhase === "during" && <DuringTripTab trip={trip} bags={bags} items={items} />}
         {trip.currentPhase === "return" && <ReturnPackTab trip={trip} bags={bags} items={items} />}
         {trip.currentPhase === "unpack" && <UnpackTab trip={trip} bags={bags} items={items} />}
+
+        <TripStatsCards summary={summary} />
       </div>
 
       {editing && (
@@ -133,7 +136,7 @@ export default function TripDetail({ tripId }: { tripId: string }) {
           </>
         }
       >
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-slate-600 dark:text-slate-300">
           This permanently removes the trip and all its items and bags.
         </p>
       </Modal>
@@ -150,7 +153,7 @@ function PhaseTabs({
   onChange: (p: LifecyclePhase) => void;
 }) {
   return (
-    <div className="sticky top-0 z-20 bg-slate-50/95 backdrop-blur supports-[backdrop-filter]:bg-slate-50/80 border-b border-slate-200 mt-3">
+    <div className="sticky top-0 z-20 bg-slate-50/95 backdrop-blur supports-[backdrop-filter]:bg-slate-50/80 border-b border-slate-200 mt-3 dark:bg-slate-950/90 dark:supports-[backdrop-filter]:bg-slate-950/70 dark:border-slate-700">
       <div className="max-w-screen-sm mx-auto overflow-x-auto no-scrollbar">
         <div className="flex">
           {PHASES.map((p) => {
@@ -161,8 +164,8 @@ function PhaseTabs({
                 onClick={() => onChange(p)}
                 className={`tap flex-1 min-w-[80px] py-2.5 text-sm font-medium border-b-2 transition-colors ${
                   active
-                    ? "border-brand-500 text-brand-700"
-                    : "border-transparent text-slate-500 hover:text-slate-700"
+                    ? "border-brand-500 text-brand-700 dark:text-brand-300"
+                    : "border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
                 }`}
               >
                 {PHASE_LABEL[p]}
@@ -266,11 +269,7 @@ function EditTripModal({
                       prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]
                     )
                   }
-                  className={`chip ${
-                    sel
-                      ? "bg-brand-50 border-brand-500 text-brand-700"
-                      : "bg-white border-slate-200 text-slate-700"
-                  }`}
+                  className={sel ? "field-chip-on" : "field-chip-off"}
                 >
                   {l}
                 </button>

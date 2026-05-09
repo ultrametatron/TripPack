@@ -65,7 +65,7 @@ export default function PackTab({ trip, bags, items }: { trip: Trip; bags: Bag[]
             <section key={g.key}>
               <div className="flex items-center justify-between mt-3 mb-2">
                 <SectionHeader title={g.label} />
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-slate-500 dark:text-slate-400">
                   {packed}/{g.items.length} packed
                 </span>
               </div>
@@ -116,8 +116,8 @@ function FilterBar({
       onClick={() => onFilter(val)}
       className={`chip whitespace-nowrap ${
         filter === val
-          ? "bg-brand-50 border-brand-500 text-brand-700"
-          : "bg-white border-slate-200 text-slate-700"
+          ? "bg-brand-50 border-brand-500 text-brand-700 dark:bg-brand-500/20 dark:border-brand-500 dark:text-brand-300"
+          : "bg-white border-slate-200 text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200"
       }`}
     >
       {label}
@@ -136,15 +136,15 @@ function FilterBar({
         <Tab val="unassigned" label="Unassigned" badge={unassigned} tone="warn" />
       </div>
       <div className="flex gap-2 text-xs">
-        <span className="text-slate-500">Group by</span>
+        <span className="text-slate-500 dark:text-slate-400">Group by</span>
         <button
-          className={`underline ${groupBy === "bag" ? "text-brand-600 font-semibold" : "text-slate-500"}`}
+          className={`underline ${groupBy === "bag" ? "text-brand-600 font-semibold dark:text-brand-300" : "text-slate-500 dark:text-slate-400"}`}
           onClick={() => onGroupBy("bag")}
         >
           Bag
         </button>
         <button
-          className={`underline ${groupBy === "category" ? "text-brand-600 font-semibold" : "text-slate-500"}`}
+          className={`underline ${groupBy === "category" ? "text-brand-600 font-semibold dark:text-brand-300" : "text-slate-500 dark:text-slate-400"}`}
           onClick={() => onGroupBy("category")}
         >
           Category

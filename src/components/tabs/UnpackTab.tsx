@@ -41,9 +41,9 @@ export default function UnpackTab({
 
   return (
     <div className="space-y-3 pb-6">
-      <div className="card p-3 bg-ok-50 border-ok-100">
-        <div className="text-sm font-semibold text-ok-600">Unpack & reset</div>
-        <div className="text-xs text-ok-600/80">
+      <div className="card p-3 bg-ok-50 border-ok-100 dark:bg-ok-500/15 dark:border-ok-500/30">
+        <div className="text-sm font-semibold text-ok-600 dark:text-ok-500">Unpack & reset</div>
+        <div className="text-xs text-ok-600/80 dark:text-ok-500/80">
           Mark unpacked, finish laundry, restock consumables, or save reusable modules.
         </div>
       </div>
@@ -82,7 +82,7 @@ export default function UnpackTab({
         renderActions={(it) => (
           <>
             <button
-              className="chip text-xs bg-white border-slate-200"
+              className="chip text-xs bg-white border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200"
               onClick={() => setItemStatus(it.id, "left_at_destination")}
             >
               Confirm left
@@ -111,8 +111,8 @@ export default function UnpackTab({
       />
 
       <div className="card p-3 mt-4">
-        <div className="font-semibold text-slate-900">Reuse this trip</div>
-        <p className="text-xs text-slate-500 mt-1 mb-3">
+        <div className="font-semibold text-slate-900 dark:text-slate-100">Reuse this trip</div>
+        <p className="text-xs text-slate-500 mt-1 mb-3 dark:text-slate-400">
           Save the current item list as a module to reuse on future trips, or clear the trip when
           you're done.
         </p>
@@ -182,7 +182,7 @@ export default function UnpackTab({
           </>
         }
       >
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-slate-600 dark:text-slate-300">
           This deletes the trip and its items. Save it as a module first if you want to reuse it.
         </p>
       </Modal>
@@ -210,13 +210,13 @@ function UnpackSection({
           <li key={it.id} className="card p-3">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <div className="font-medium text-slate-900 truncate">
+                <div className="font-medium text-slate-900 truncate dark:text-slate-100">
                   {it.name}
                   {it.quantity > 1 && (
-                    <span className="ml-1 text-slate-400 font-normal">×{it.quantity}</span>
+                    <span className="ml-1 text-slate-400 font-normal dark:text-slate-500">×{it.quantity}</span>
                   )}
                 </div>
-                <div className="text-xs text-slate-500 truncate">
+                <div className="text-xs text-slate-500 truncate dark:text-slate-400">
                   {bags.find((b) => b.id === it.bagId)?.name ?? "Unassigned"}
                 </div>
               </div>

@@ -135,6 +135,7 @@ export interface AppState {
   items: Item[];
   modules: Module[];
   seeded: boolean;
+  seedVersion?: number;
 }
 
 export const TRIP_TYPE_LABEL: Record<TripType, string> = {

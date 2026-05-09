@@ -65,7 +65,7 @@ export default function CreateTrip() {
             ← Trips
           </button>
           <h1 className="text-xl font-bold">Apply modules</h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Pick modules to seed your packing list. You can edit everything afterwards.
           </p>
         </header>
@@ -88,15 +88,15 @@ export default function CreateTrip() {
                   />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-slate-900">{m.name}</span>
+                      <span className="font-semibold text-slate-900 dark:text-slate-100">{m.name}</span>
                       {recommendedHere && (
-                        <span className="badge bg-brand-100 text-brand-700">Recommended</span>
+                        <span className="badge bg-brand-100 text-brand-700 dark:bg-brand-500/20 dark:text-brand-300">Recommended</span>
                       )}
                     </div>
                     {m.description && (
-                      <div className="text-xs text-slate-500 mt-0.5">{m.description}</div>
+                      <div className="text-xs text-slate-500 mt-0.5 dark:text-slate-400">{m.description}</div>
                     )}
-                    <div className="text-xs text-slate-400 mt-1">
+                    <div className="text-xs text-slate-400 mt-1 dark:text-slate-500">
                       {m.defaultItems.length} item{m.defaultItems.length === 1 ? "" : "s"}
                     </div>
                   </div>
@@ -155,23 +155,27 @@ export default function CreateTrip() {
             placeholder="City or place"
           />
         </Field>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Start date">
-            <input
-              type="date"
-              className="input"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-          </Field>
-          <Field label="End date">
-            <input
-              type="date"
-              className="input"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </Field>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="min-w-0">
+            <Field label="Start date">
+              <input
+                type="date"
+                className="input"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </Field>
+          </div>
+          <div className="min-w-0">
+            <Field label="End date">
+              <input
+                type="date"
+                className="input"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </Field>
+          </div>
         </div>
 
         <Field label="Trip type">
@@ -190,11 +194,18 @@ export default function CreateTrip() {
           />
         </Field>
 
-        <ToggleField
-          label="Remote work required"
-          value={remoteWorkRequired}
-          onChange={setRemoteWorkRequired}
-        />
+        <div className="grid grid-cols-2 gap-2">
+          <ToggleField
+            label="Remote work"
+            value={remoteWorkRequired}
+            onChange={setRemoteWorkRequired}
+          />
+          <ToggleField
+            label="Gifts / food"
+            value={takingGiftsOrFood}
+            onChange={setTakingGiftsOrFood}
+          />
+        </div>
 
         <Field label="Laundry access">
           <ChipGroup
@@ -216,11 +227,7 @@ export default function CreateTrip() {
                 <button
                   key={v}
                   type="button"
-                  className={`chip ${
-                    selected
-                      ? "bg-brand-50 border-brand-500 text-brand-700"
-                      : "bg-white border-slate-200 text-slate-700"
-                  }`}
+                  className={selected ? "field-chip-on" : "field-chip-off"}
                   onClick={() => toggleActivity(v as Activity)}
                 >
                   {l}
@@ -229,12 +236,6 @@ export default function CreateTrip() {
             })}
           </div>
         </Field>
-
-        <ToggleField
-          label="Taking gifts or food"
-          value={takingGiftsOrFood}
-          onChange={setTakingGiftsOrFood}
-        />
 
         <Field label="Notes">
           <textarea
@@ -277,24 +278,30 @@ function ToggleField({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between card p-3">
-      <span className="text-sm font-medium text-slate-800">{label}</span>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={value}
-        onClick={() => onChange(!value)}
-        className={`tap relative w-12 h-7 rounded-full transition-colors ${
-          value ? "bg-brand-500" : "bg-slate-300"
+    <button
+      type="button"
+      role="switch"
+      aria-checked={value}
+      aria-label={label}
+      onClick={() => onChange(!value)}
+      className="flex items-center justify-between gap-2 w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-2 text-left dark:bg-slate-800 dark:border-slate-700"
+    >
+      <span className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">
+        {label}
+      </span>
+      <span
+        aria-hidden
+        className={`relative shrink-0 w-9 h-5 rounded-full transition-colors ${
+          value ? "bg-brand-500" : "bg-slate-300 dark:bg-slate-700"
         }`}
       >
         <span
-          className={`absolute top-0.5 left-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform ${
-            value ? "translate-x-5" : ""
+          className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${
+            value ? "translate-x-4" : ""
           }`}
         />
-      </button>
-    </div>
+      </span>
+    </button>
   );
 }
 

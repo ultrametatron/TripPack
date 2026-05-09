@@ -48,9 +48,9 @@ export default function ReturnPackTab({
 
   return (
     <div className="space-y-3 pb-6">
-      <div className="card p-3 bg-brand-50 border-brand-100">
-        <div className="text-sm font-semibold text-brand-700">Return packing mode</div>
-        <div className="text-xs text-brand-700/80">
+      <div className="card p-3 bg-brand-50 border-brand-100 dark:bg-brand-500/15 dark:border-brand-500/30">
+        <div className="text-sm font-semibold text-brand-700 dark:text-brand-300">Return packing mode</div>
+        <div className="text-xs text-brand-700/80 dark:text-brand-300/80">
           Confirm what's coming home, what stays behind, and what's missing.
         </div>
       </div>
@@ -175,13 +175,13 @@ function ReturnSection({
           <li key={it.id} className="card p-3">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <div className="font-medium text-slate-900 truncate">
+                <div className="font-medium text-slate-900 truncate dark:text-slate-100">
                   {it.name}
                   {it.quantity > 1 && (
-                    <span className="ml-1 text-slate-400 font-normal">×{it.quantity}</span>
+                    <span className="ml-1 text-slate-400 font-normal dark:text-slate-500">×{it.quantity}</span>
                   )}
                 </div>
-                <div className="text-xs text-slate-500 truncate">
+                <div className="text-xs text-slate-500 truncate dark:text-slate-400">
                   {bags.find((b) => b.id === it.bagId)?.name ?? "Unassigned"} ·{" "}
                   {it.returnExpected ? "Return expected" : "Not expected back"}
                 </div>
@@ -213,7 +213,7 @@ function ActionBtn({
       ? "bg-ok-500 border-ok-500 text-white"
       : tone === "danger"
       ? "bg-danger-500 border-danger-500 text-white"
-      : "bg-white border-slate-200 text-slate-700";
+      : "bg-white border-slate-200 text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200";
   return (
     <button className={`chip text-xs ${cls}`} onClick={onClick}>
       {label}
