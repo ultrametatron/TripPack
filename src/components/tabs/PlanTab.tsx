@@ -49,13 +49,12 @@ export default function PlanTab({ trip, bags, items }: { trip: Trip; bags: Bag[]
 
       {itemsByBag.map(({ bag, list }) => (
         <section key={bag?.id ?? "unassigned"}>
-          <SectionHeader title={bag ? bag.name : "Unassigned"} count={list.length} />
-          {bag && (
-            <div className="flex items-center gap-2 mb-2">
+          {bag ? (
+            <div className="flex items-center gap-2 mb-2 mt-5 first:mt-0">
               {editingBagId === bag.id ? (
                 <input
                   autoFocus
-                  className="input !py-1.5 text-sm"
+                  className="flex-1 min-w-0 input !py-1.5 text-base font-semibold"
                   defaultValue={bag.name}
                   onBlur={(e) => {
                     const v = e.target.value.trim();
@@ -68,9 +67,14 @@ export default function PlanTab({ trip, bags, items }: { trip: Trip; bags: Bag[]
                   }}
                 />
               ) : (
-                <span className="flex-1 text-sm font-medium text-slate-700 dark:text-slate-300 truncate">
-                  {bag.name}
-                </span>
+                <>
+                  <h3 className="flex-1 min-w-0 truncate text-base font-semibold text-slate-900 dark:text-slate-100">
+                    {bag.name}
+                  </h3>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium tabular-nums">
+                    {list.length}
+                  </span>
+                </>
               )}
               <button
                 className="btn-ghost !py-1.5"
@@ -85,6 +89,8 @@ export default function PlanTab({ trip, bags, items }: { trip: Trip; bags: Bag[]
                 Remove
               </button>
             </div>
+          ) : (
+            <SectionHeader title="Unassigned" count={list.length} />
           )}
           <div className="space-y-2">
             {list.length === 0 ? (
