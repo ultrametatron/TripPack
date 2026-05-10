@@ -98,7 +98,7 @@ export default function DuringTripTab({
               <li key={item.id} className="card p-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <div className="font-medium text-slate-900 truncate dark:text-slate-100">
+                    <div className="text-base font-medium text-slate-900 truncate dark:text-slate-100">
                       {item.name}
                       {item.quantity > 1 && (
                         <span className="ml-1 text-slate-400 font-normal dark:text-slate-500">×{item.quantity}</span>

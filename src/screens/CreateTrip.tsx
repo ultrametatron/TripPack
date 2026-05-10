@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useStore } from "../store";
 import { navigate } from "../App";
+import ModulePickerRow from "../components/ModulePickerRow";
 import {
   ACTIVITY_LABEL,
   TRANSPORT_LABEL,
@@ -64,46 +65,25 @@ export default function CreateTrip() {
           <button className="btn-ghost mb-2 -ml-2" onClick={() => navigate({ name: "home" })}>
             ← Trips
           </button>
-          <h1 className="text-xl font-bold">Apply modules</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Apply modules</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Pick modules to seed your packing list. You can edit everything afterwards.
           </p>
         </header>
         <ul className="space-y-2">
-          {state.modules.map((m) => {
-            const checked = selectedModuleIds.includes(m.id);
-            const recommendedHere = recommended.includes(m.id);
-            return (
-              <li key={m.id} className="card p-3">
-                <label className="flex items-start gap-3">
-                  <input
-                    type="checkbox"
-                    className="mt-1 h-5 w-5"
-                    checked={checked}
-                    onChange={() =>
-                      setSelectedModuleIds((prev) =>
-                        prev.includes(m.id) ? prev.filter((x) => x !== m.id) : [...prev, m.id]
-                      )
-                    }
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-slate-900 dark:text-slate-100">{m.name}</span>
-                      {recommendedHere && (
-                        <span className="badge bg-brand-100 text-brand-700 dark:bg-brand-500/20 dark:text-brand-300">Recommended</span>
-                      )}
-                    </div>
-                    {m.description && (
-                      <div className="text-xs text-slate-500 mt-0.5 dark:text-slate-400">{m.description}</div>
-                    )}
-                    <div className="text-xs text-slate-400 mt-1 dark:text-slate-500">
-                      {m.defaultItems.length} item{m.defaultItems.length === 1 ? "" : "s"}
-                    </div>
-                  </div>
-                </label>
-              </li>
-            );
-          })}
+          {state.modules.map((m) => (
+            <ModulePickerRow
+              key={m.id}
+              module={m}
+              checked={selectedModuleIds.includes(m.id)}
+              recommended={recommended.includes(m.id)}
+              onToggle={() =>
+                setSelectedModuleIds((prev) =>
+                  prev.includes(m.id) ? prev.filter((x) => x !== m.id) : [...prev, m.id]
+                )
+              }
+            />
+          ))}
         </ul>
         <div className="mt-4 flex gap-2 sticky bottom-20">
           <button
@@ -134,7 +114,7 @@ export default function CreateTrip() {
         <button className="btn-ghost mb-2 -ml-2" onClick={() => navigate({ name: "home" })}>
           ← Trips
         </button>
-        <h1 className="text-xl font-bold">New trip</h1>
+        <h1 className="text-2xl font-bold tracking-tight">New trip</h1>
       </header>
 
       <div className="space-y-3">

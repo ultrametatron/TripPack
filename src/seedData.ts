@@ -77,7 +77,6 @@ export function buildSeedModules(): Module[] {
     make("Road Trip Food", "Snacks and drinks for the drive.", [
       mi({ name: "Protein bar", category: "food", defaultBagType: "suitcase", quantity: 4, journeyRole: "consumable", returnExpected: false }),
       mi({ name: "Grocery bag", category: "bags", defaultBagType: "suitcase" }),
-      mi({ name: "Cooler bag item placeholder", category: "food", defaultBagType: "cooler_bag", journeyRole: "consumable", returnExpected: false }),
       mi({ name: "Water bottle", category: "accessories", defaultBagType: "shoulder_bag" }),
     ]),
     make("Family Gifts", "Gifts and food to give away.", [

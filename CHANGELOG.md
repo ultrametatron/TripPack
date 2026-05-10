@@ -5,6 +5,74 @@ All notable changes to TripPack are documented here. Newest entries first.
 The project does not yet publish versioned releases — entries are grouped by
 the commit batch (and date) that introduced them.
 
+## 2026-05-10 — Rename to PacTrac, polish + typography pass
+
+Round of polish in response to a thorough mobile test pass. Includes a brand
+rename, eight functional fixes, and an end-to-end typography hierarchy sweep.
+
+### Renamed
+- **TripPack → PacTrac** across the UI: `<title>`, Home header, PIN screen,
+  How-it-works copy, Settings about copy, JSON export error message, and the
+  exported filename (`pactrac-YYYY-MM-DD.json`). README intro and headings
+  updated.
+- `package.json` `name` field updated to `pactrac`.
+- localStorage keys (`trippack:v1`, `trippack:theme`, `trippack:pin_hash`),
+  the export-envelope key (`trippack_export_version`), and the internal
+  `trippack:pin-changed` event name **stay as-is** so existing users' data
+  and previously-exported JSON files continue to work.
+- Repo URL and `vite.config.ts` `base: "/TripPack/"` are unchanged — they
+  depend on the GitHub repo name; renaming the repo is a separate decision.
+
+### Added
+- **Journey role editor in `ItemRow`** — when a trip item is expanded, the
+  journey role is now editable alongside status, bag, and qty. Previously
+  this could only be changed in the Modules tab.
+- **Module preview in apply flows** — new `src/components/ModulePickerRow.tsx`
+  used by both Create Trip's module-picker step and the Plan tab's "Apply
+  modules" modal. Tap a module's body to expand a list of its items with
+  critical / journey-role chips. Checkbox toggles selection independently.
+- **`BULK_ADD_BAGS` reducer action** — supports lazy bag creation in
+  `applyModulesToTrip`.
+
+### Changed
+- **Lifecycle stage labels** simplified: `Plan / Pack / During / Repack / Unpack`
+  (was `Plan / Pack / During trip / Return pack / Unpack / reset`). Internal
+  `LifecyclePhase` enum values are unchanged so existing trips load fine.
+- **No default bags on new trips.** Trips now start with an empty `bagIds: []`.
+  `applyModulesToTrip` lazily creates only the bag types that the applied
+  modules reference. Empty trips can also have bags added via "Add bag".
+- **Bag rename** in Plan now requires a **Rename button** (matches the
+  ItemRow pattern). The always-live input is gone; rename writes on Enter
+  / blur and cancels on Escape.
+- **Edit Trip dates** stack vertically on mobile (mirrors the Create Trip
+  fix from the prior iteration).
+- **Removed** the "Cooler bag item placeholder" item from the Road Trip
+  Food seed module. Existing users who already seeded it can delete it
+  manually; no migration logic.
+- **Typography hierarchy pass.** Established a clear scale across the app:
+  - Page titles (h1) → `text-2xl font-bold tracking-tight` (was mixed
+    `text-xl` / `text-2xl`).
+  - Modal titles (h2) → `text-lg font-semibold` (previously had no explicit
+    size).
+  - Section titles (h3, in `SectionHeader`) → `text-base font-semibold`
+    sentence case (was `text-sm font-bold uppercase tracking-wide` —
+    read smaller than body, like an overline).
+  - Stats group header and Settings section labels follow the same rule.
+  - Inner stat-card titles → `text-sm font-semibold` sentence case.
+  - Item names in lists → `text-base font-medium` (was `font-medium` with
+    no size).
+  - Trip card name on Home → `text-lg font-semibold` for clearer hierarchy.
+  - Form-field `.label` keeps the small uppercase treatment — input labels
+    are intentionally small and stylized.
+
+### Internal
+- Removed the `DEFAULT_BAGS` constant from `src/store.ts`; `addTrip` no
+  longer eagerly creates bags.
+- New `src/components/ModulePickerRow.tsx`.
+- No new runtime dependencies. No localStorage migration.
+
+---
+
 ## 2026-05-09 — Iteration 2: dates, toggles, How-it-works prominence
 
 Smaller follow-up after live-testing on a phone.

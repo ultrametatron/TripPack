@@ -28,7 +28,7 @@ export default function SettingsSheet({ onClose }: { onClose: () => void }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `trippack-${todayStamp()}.json`;
+    a.download = `pactrac-${todayStamp()}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -163,7 +163,7 @@ export default function SettingsSheet({ onClose }: { onClose: () => void }) {
 
         <Section title="About">
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            TripPack stores everything locally in your browser. Trips and modules
+            PacTrac stores everything locally in your browser. Trips and modules
             are not shared between visitors of the site or across your devices —
             use Export to move data manually.
           </p>
@@ -278,7 +278,7 @@ export default function SettingsSheet({ onClose }: { onClose: () => void }) {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h3 className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">
+      <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">
         {title}
       </h3>
       {children}

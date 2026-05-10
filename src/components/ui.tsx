@@ -71,7 +71,7 @@ export function Modal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between dark:border-slate-700">
-          <h2 className="font-semibold text-slate-900 dark:text-slate-100">{title}</h2>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{title}</h2>
           <button className="tap text-slate-500 px-2 dark:text-slate-400" onClick={onClose} aria-label="Close">
             ✕
           </button>
@@ -118,15 +118,15 @@ export function SectionHeader({
     warn: "text-warn-600 dark:text-warn-500",
     danger: "text-danger-600 dark:text-danger-500",
     ok: "text-ok-600 dark:text-ok-500",
-    neutral: "text-slate-700 dark:text-slate-300",
+    neutral: "text-slate-900 dark:text-slate-100",
   };
   return (
-    <div className="flex items-center justify-between mb-2 mt-4 first:mt-0">
-      <h3 className={`text-sm font-bold uppercase tracking-wide ${tones[tone ?? "neutral"]}`}>
-        {title}
-      </h3>
+    <div className="flex items-baseline justify-between gap-2 mb-2 mt-5 first:mt-0">
+      <h3 className={`text-base font-semibold ${tones[tone ?? "neutral"]}`}>{title}</h3>
       {typeof count === "number" && (
-        <span className="text-xs text-slate-500 font-medium dark:text-slate-400">{count}</span>
+        <span className="text-xs text-slate-500 font-medium dark:text-slate-400 tabular-nums">
+          {count}
+        </span>
       )}
     </div>
   );

@@ -1,12 +1,15 @@
-# TripPack
+# PacTrac
 
 Track everything you pack. A mobile-first packing planner that follows the
-whole trip lifecycle: plan, pack, during trip, return pack, and unpack.
+whole trip lifecycle: **Plan → Pack → During → Repack → Unpack**.
 
-> **Heads up:** TripPack is a fully client-side app with no backend or
+> **Heads up:** PacTrac is a fully client-side app with no backend or
 > authentication. Each browser keeps its own data. Multiple users visiting the
 > same URL get isolated copies — see [Sharing model](#sharing-model) below. Use
 > **You → Export** to back up or move data between devices.
+
+> _Renamed from TripPack to PacTrac in 2026-05. localStorage keys, the export
+> envelope, and the GitHub Pages URL still use the old name for compatibility._
 
 ## Stack
 
@@ -50,11 +53,11 @@ branch → `gh-pages` / `(root)`** and re-run the workflow.
 | --- | --- |
 | **Trips** | Create, clone, edit, delete. Cards show progress, critical-missing, lost / unassigned / unresolved counts. A "How it works →" link below the tagline opens a 7-step onboarding modal. |
 | **Modules** | Reusable item bundles. Create / rename / duplicate / delete; per-item editor for qty, category, default bag, journey role, critical, return-expected. **Search** at the top of the Modules screen filters by name or description. Twelve seeded by default. |
-| **Lifecycle** | Five tabs per trip: Plan → Pack → During Trip → Return Pack → Unpack / Reset. |
+| **Lifecycle** | Five tabs per trip: Plan → Pack → During → Repack → Unpack. |
 | **Plan** | Apply one or more modules, add bags (custom names), quick-add items, save the current item list as a new module. |
 | **Pack** | Checklist view with one-tap packed toggle. Filters: All / Unpacked / Critical / Unassigned. Group by bag or category. |
-| **During trip** | Quick status chips: Consumed / Gifted / Laundry / Trashed / Left / Lost. Move-bag dialog. Add bought items with a return-expected toggle. |
-| **Return pack** | Distinct mode with sections for Must bring back / Not expected / Bought / Dirty / Lost / Needs bag, each with one-tap actions. |
+| **During** | Quick status chips: Consumed / Gifted / Laundry / Trashed / Left / Lost. Move-bag dialog. Add bought items with a return-expected toggle. |
+| **Repack** | Distinct mode with sections for Must bring back / Not expected / Bought / Dirty / Lost / Needs bag, each with one-tap actions. |
 | **Unpack** | Mark unpacked / laundry-done / restock-needed; save as module; clear trip. |
 | **Stats** | Per-trip summary cards at the bottom of every tab: packed progress, critical, by bag (mini bars), statuses, top categories, journey roles, return-expected, on-the-trip totals. |
 | **You** | Bottom-nav tab (`👤`) holding theme toggle (Auto / Light / Dark), JSON Export / Import, Clear all, PIN set / change / remove / forget, plus an About section. |
@@ -67,7 +70,8 @@ Open via the **You** tab (`👤`) in the bottom nav. Sections:
   device's `prefers-color-scheme`. Persisted under
   `localStorage["trippack:theme"]`.
 - **Data**
-  - **Export** downloads `trippack-YYYY-MM-DD.json` (versioned envelope).
+  - **Export** downloads `pactrac-YYYY-MM-DD.json` (versioned envelope; the
+    `trippack_export_version` key inside is preserved for compatibility).
   - **Import** validates the file, shows a count summary, and replaces the
     current contents on confirm.
   - **Clear all data** wipes trips, items, bags, and modules and re-seeds the
@@ -89,7 +93,7 @@ requires typing `WIPE` and erases all data, since there is no backend recovery.
 
 Because there is no backend:
 
-- Every browser is a separate, isolated TripPack. Visitors to the deployed URL
+- Every browser is a separate, isolated PacTrac. Visitors to the deployed URL
   do not share trips.
 - One person on two devices (phone + laptop) gets two separate datasets.
   Bridge them by exporting JSON from one device and importing on the other.
@@ -156,6 +160,7 @@ src/
     SettingsSheet.tsx        "You" sheet (theme, data, PIN)
     TripStatsCards.tsx       per-trip summary card grid
     HowItWorks.tsx           7-step onboarding modal
+    ModulePickerRow.tsx      module picker row with item preview
     tabs/
       PlanTab.tsx
       PackTab.tsx
@@ -173,7 +178,7 @@ src/
 - ✅ Create bags and assign items — Plan tab + ItemRow + Move-bag dialog
 - ✅ Mark items packed — Pack tab checkbox
 - ✅ Track item statuses during the trip — During Trip tab quick statuses
-- ✅ Return Pack mode — distinct grouping with one-tap actions
+- ✅ Repack mode — distinct grouping with one-tap actions
 - ✅ Unpack / Reset mode — unpack, laundry, restock, save as module, clear
 - ✅ Persists in localStorage and works on mobile viewports
 - ✅ Dark mode (Auto / Light / Dark)

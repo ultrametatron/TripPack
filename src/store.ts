@@ -16,18 +16,9 @@ import type {
   ModuleItem,
   Trip,
 } from "./types";
+import { BAG_TYPE_LABEL } from "./types";
 import { loadState, saveState, uid } from "./storage";
 import { buildSeedModules } from "./seedData";
-
-const DEFAULT_BAGS: { type: BagType; name: string }[] = [
-  { type: "shoulder_bag", name: "Shoulder bag" },
-  { type: "suitcase", name: "Suitcase" },
-  { type: "backpack", name: "Backpack" },
-  { type: "laptop_bag", name: "Laptop bag" },
-  { type: "toiletry_pouch", name: "Toiletry pouch" },
-  { type: "cooler_bag", name: "Cooler bag" },
-  { type: "gift_bag", name: "Gift bag" },
-];
 
 const initial: AppState = { trips: [], bags: [], items: [], modules: [], seeded: false };
 
@@ -46,6 +37,7 @@ type Action =
   | { type: "UPDATE_ITEM"; item: Item }
   | { type: "DELETE_ITEM"; itemId: string }
   | { type: "BULK_ADD_ITEMS"; items: Item[] }
+  | { type: "BULK_ADD_BAGS"; bags: Bag[] }
   | { type: "ADD_MODULE"; module: Module }
   | { type: "UPDATE_MODULE"; module: Module }
   | { type: "DELETE_MODULE"; moduleId: string };
@@ -163,6 +155,18 @@ function reducer(state: AppState, action: Action): AppState {
         ),
       };
     }
+    case "BULK_ADD_BAGS": {
+      const tripId = action.bags[0]?.tripId;
+      return {
+        ...state,
+        bags: [...state.bags, ...action.bags],
+        trips: state.trips.map((t) =>
+          tripId && t.id === tripId
+            ? { ...t, bagIds: [...t.bagIds, ...action.bags.map((b) => b.id)] }
+            : t
+        ),
+      };
+    }
     case "UPDATE_ITEM":
       return {
         ...state,
@@ -267,22 +271,19 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       addTrip(input) {
         const now = Date.now();
         const tripId = uid("trip");
-        const newBags: Bag[] = DEFAULT_BAGS.map((b) => ({
-          id: uid("bag"),
-          tripId,
-          name: b.name,
-          type: b.type,
-        }));
+        // No default bags — bags are created lazily by applyModulesToTrip or
+        // explicitly via the "Add bag" button. Keeps the Plan tab clean for
+        // trips that don't apply any modules.
         const trip: Trip = {
           ...input,
           id: tripId,
           currentPhase: "plan",
-          bagIds: newBags.map((b) => b.id),
+          bagIds: [],
           itemIds: [],
           createdAt: now,
           updatedAt: now,
         };
-        dispatch({ type: "ADD_TRIP", trip, bags: newBags });
+        dispatch({ type: "ADD_TRIP", trip, bags: [] });
         return trip;
       },
       updateTrip(trip) {
@@ -375,11 +376,32 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         const trip = state.trips.find((t) => t.id === tripId);
         if (!trip) return 0;
         const tripBags = findBagsForTrip(tripId);
-        const findBagId = (type?: BagType) => {
-          if (!type) return undefined;
-          return tripBags.find((b) => b.type === type)?.id;
-        };
         const now = Date.now();
+
+        // Snapshot existing bag types on this trip.
+        const bagTypeToId = new Map<BagType, string>();
+        for (const b of tripBags) bagTypeToId.set(b.type, b.id);
+
+        // Walk modules; create bags for any defaultBagType not already present.
+        const newBags: Bag[] = [];
+        for (const mid of moduleIds) {
+          const mod = state.modules.find((m) => m.id === mid);
+          if (!mod) continue;
+          for (const def of mod.defaultItems) {
+            if (def.defaultBagType && !bagTypeToId.has(def.defaultBagType)) {
+              const newBag: Bag = {
+                id: uid("bag"),
+                tripId,
+                name: BAG_TYPE_LABEL[def.defaultBagType],
+                type: def.defaultBagType,
+              };
+              newBags.push(newBag);
+              bagTypeToId.set(def.defaultBagType, newBag.id);
+            }
+          }
+        }
+
+        // Build items now that all bag IDs are resolved.
         const newItems: Item[] = [];
         for (const mid of moduleIds) {
           const mod = state.modules.find((m) => m.id === mid);
@@ -392,7 +414,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
               name: def.name,
               quantity: def.quantity,
               category: def.category,
-              bagId: findBagId(def.defaultBagType),
+              bagId: def.defaultBagType ? bagTypeToId.get(def.defaultBagType) : undefined,
               status: "planned",
               journeyRole: def.journeyRole,
               returnExpected: def.returnExpected,
@@ -403,6 +425,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             });
           }
         }
+
+        if (newBags.length) dispatch({ type: "BULK_ADD_BAGS", bags: newBags });
         if (newItems.length) dispatch({ type: "BULK_ADD_ITEMS", items: newItems });
         return newItems.length;
       },

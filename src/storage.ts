@@ -55,7 +55,7 @@ export function importData(json: string): AppState {
   }
   const env = parsed as Partial<ExportEnvelope>;
   if (env.trippack_export_version !== 1) {
-    throw new Error("This file is not a TripPack export (or has an unsupported version).");
+    throw new Error("This file is not a PacTrac export (or has an unsupported version).");
   }
   const data = env.data as Partial<AppState> | undefined;
   if (

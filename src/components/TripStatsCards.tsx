@@ -24,7 +24,7 @@ export default function TripStatsCards({ summary }: { summary: TripSummary }) {
 
   return (
     <section className="mt-6">
-      <h2 className="text-sm font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-3 px-1">
+      <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-3 px-1">
         Trip stats
       </h2>
       <div className="grid grid-cols-2 gap-3">
@@ -198,7 +198,7 @@ function Card({
 }) {
   return (
     <div className={`card p-3 ${full || wide ? "col-span-2" : ""}`}>
-      <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">
+      <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-2">
         {title}
       </h3>
       {children}

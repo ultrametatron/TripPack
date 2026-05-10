@@ -5,6 +5,7 @@ import { useStore } from "../../store";
 import { Modal, EmptyState, SectionHeader } from "../ui";
 import { ItemRow } from "../ItemRow";
 import AddItemBar from "../AddItemBar";
+import ModulePickerRow from "../ModulePickerRow";
 
 export default function PlanTab({ trip, bags, items }: { trip: Trip; bags: Bag[]; items: Item[] }) {
   const { state, applyModulesToTrip, addBag, updateBag, deleteBag, saveTripAsModule } = useStore();
@@ -13,6 +14,7 @@ export default function PlanTab({ trip, bags, items }: { trip: Trip; bags: Bag[]
   const [newBagOpen, setNewBagOpen] = useState(false);
   const [bagName, setBagName] = useState("");
   const [bagType, setBagType] = useState<BagType>("custom");
+  const [editingBagId, setEditingBagId] = useState<string | null>(null);
   const [savingModule, setSavingModule] = useState(false);
   const [moduleName, setModuleName] = useState("");
 
@@ -49,17 +51,38 @@ export default function PlanTab({ trip, bags, items }: { trip: Trip; bags: Bag[]
         <section key={bag?.id ?? "unassigned"}>
           <SectionHeader title={bag ? bag.name : "Unassigned"} count={list.length} />
           {bag && (
-            <div className="flex gap-2 mb-2">
-              <input
-                className="input !py-1.5 text-sm"
-                value={bag.name}
-                onChange={(e) => updateBag({ ...bag, name: e.target.value })}
-              />
+            <div className="flex items-center gap-2 mb-2">
+              {editingBagId === bag.id ? (
+                <input
+                  autoFocus
+                  className="input !py-1.5 text-sm"
+                  defaultValue={bag.name}
+                  onBlur={(e) => {
+                    const v = e.target.value.trim();
+                    if (v && v !== bag.name) updateBag({ ...bag, name: v });
+                    setEditingBagId(null);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                    if (e.key === "Escape") setEditingBagId(null);
+                  }}
+                />
+              ) : (
+                <span className="flex-1 text-sm font-medium text-slate-700 dark:text-slate-300 truncate">
+                  {bag.name}
+                </span>
+              )}
+              <button
+                className="btn-ghost !py-1.5"
+                onClick={() => setEditingBagId(bag.id)}
+              >
+                Rename
+              </button>
               <button
                 className="btn-ghost text-danger-600 !py-1.5"
                 onClick={() => deleteBag(bag.id)}
               >
-                Remove bag
+                Remove
               </button>
             </div>
           )}
@@ -106,31 +129,18 @@ export default function PlanTab({ trip, bags, items }: { trip: Trip; bags: Bag[]
         }
       >
         <ul className="space-y-2">
-          {state.modules.map((m) => {
-            const checked = selected.includes(m.id);
-            return (
-              <li key={m.id} className="card p-2">
-                <label className="flex items-start gap-3">
-                  <input
-                    type="checkbox"
-                    className="mt-1 h-5 w-5"
-                    checked={checked}
-                    onChange={() =>
-                      setSelected((prev) =>
-                        prev.includes(m.id) ? prev.filter((x) => x !== m.id) : [...prev, m.id]
-                      )
-                    }
-                  />
-                  <div>
-                    <div className="font-medium text-slate-900 dark:text-slate-100">{m.name}</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400">
-                      {m.defaultItems.length} item{m.defaultItems.length === 1 ? "" : "s"}
-                    </div>
-                  </div>
-                </label>
-              </li>
-            );
-          })}
+          {state.modules.map((m) => (
+            <ModulePickerRow
+              key={m.id}
+              module={m}
+              checked={selected.includes(m.id)}
+              onToggle={() =>
+                setSelected((prev) =>
+                  prev.includes(m.id) ? prev.filter((x) => x !== m.id) : [...prev, m.id]
+                )
+              }
+            />
+          ))}
         </ul>
       </Modal>
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Bag, Item, ItemStatus } from "../types";
+import type { Bag, Item, ItemStatus, JourneyRole } from "../types";
 import { JOURNEY_LABEL, STATUS_LABEL } from "../types";
 import { Badge, JOURNEY_TONE, STATUS_TONE } from "./ui";
 import { useStore } from "../store";
@@ -101,7 +101,7 @@ export function ItemRow({
                   className="text-left w-full"
                   onClick={() => expandable && setOpen((o) => !o)}
                 >
-                  <div className="font-medium text-slate-900 truncate dark:text-slate-100">
+                  <div className="text-base font-medium text-slate-900 truncate dark:text-slate-100">
                     {item.name}
                     {item.quantity > 1 && (
                       <span className="ml-1 text-slate-400 font-normal dark:text-slate-500">×{item.quantity}</span>
@@ -164,6 +164,22 @@ export function ItemRow({
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <label className="block">
+                  <span className="label">Journey role</span>
+                  <select
+                    className="input !py-2"
+                    value={item.journeyRole}
+                    onChange={(e) =>
+                      updateItem({ ...item, journeyRole: e.target.value as JourneyRole })
+                    }
+                  >
+                    {Object.entries(JOURNEY_LABEL).map(([v, l]) => (
+                      <option key={v} value={v}>
+                        {l}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="block">
                   <span className="label">Qty</span>
                   <input
                     type="number"
@@ -178,6 +194,8 @@ export function ItemRow({
                     }
                   />
                 </label>
+              </div>
+              <div className="grid grid-cols-1 gap-2">
                 <div className="flex items-end gap-3">
                   <label className="inline-flex items-center gap-2 text-sm">
                     <input

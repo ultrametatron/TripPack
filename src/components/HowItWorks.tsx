@@ -53,7 +53,7 @@ export default function HowItWorks({ onClose }: { onClose: () => void }) {
               {i + 1}
             </div>
             <div className="min-w-0">
-              <div className="font-semibold text-slate-900 dark:text-slate-100">
+              <div className="text-base font-semibold text-slate-900 dark:text-slate-100">
                 {s.title}
               </div>
               <p className="text-sm text-slate-600 dark:text-slate-300 mt-0.5">
@@ -64,7 +64,7 @@ export default function HowItWorks({ onClose }: { onClose: () => void }) {
         ))}
       </ol>
       <p className="text-xs text-slate-500 dark:text-slate-400 mt-3">
-        TripPack stores everything locally. No accounts, no servers — your data
+        PacTrac stores everything locally. No accounts, no servers — your data
         stays in this browser unless you Export it.
       </p>
     </Modal>

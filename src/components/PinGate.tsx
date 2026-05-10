@@ -63,7 +63,7 @@ export function PinGate({ children }: { children: React.ReactNode }) {
       <div className={`w-full max-w-sm ${shake ? "shake" : ""}`}>
         <div className="text-center mb-6">
           <div className="text-2xl mb-1">🧳</div>
-          <h1 className="text-xl font-bold">TripPack</h1>
+          <h1 className="text-2xl font-bold tracking-tight">PacTrac</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Enter your PIN to unlock.
           </p>

@@ -47,7 +47,7 @@ export default function TripDetail({ tripId }: { tripId: string }) {
         </button>
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <h1 className="text-xl font-bold truncate">{trip.name}</h1>
+            <h1 className="text-2xl font-bold tracking-tight truncate">{trip.name}</h1>
             <div className="text-sm text-slate-500 truncate dark:text-slate-400">
               {trip.destination}
               {(trip.startDate || trip.endDate) && (
@@ -235,8 +235,8 @@ function EditTripModal({
             onChange={(e) => setDestination(e.target.value)}
           />
         </div>
-        <div className="grid grid-cols-2 gap-2">
-          <div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="min-w-0">
             <label className="label">Start</label>
             <input
               type="date"
@@ -245,7 +245,7 @@ function EditTripModal({
               onChange={(e) => setStartDate(e.target.value)}
             />
           </div>
-          <div>
+          <div className="min-w-0">
             <label className="label">End</label>
             <input
               type="date"

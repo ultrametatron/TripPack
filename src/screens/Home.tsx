@@ -20,7 +20,7 @@ export default function Home() {
       <header className="mb-3">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <h1 className="text-2xl font-bold tracking-tight">TripPack</h1>
+            <h1 className="text-2xl font-bold tracking-tight">PacTrac</h1>
             <p className="text-sm text-slate-500 dark:text-slate-400">
               Track everything you pack.
             </p>
@@ -66,7 +66,7 @@ export default function Home() {
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <div className="font-semibold text-base text-slate-900 truncate dark:text-slate-100">
+                      <div className="font-semibold text-lg text-slate-900 truncate dark:text-slate-100">
                         {trip.name || "Untitled trip"}
                       </div>
                       <div className="text-sm text-slate-500 truncate dark:text-slate-400">

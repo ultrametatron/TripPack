@@ -219,7 +219,7 @@ export const BAG_TYPE_LABEL: Record<BagType, string> = {
 export const PHASE_LABEL: Record<LifecyclePhase, string> = {
   plan: "Plan",
   pack: "Pack",
-  during: "During trip",
-  return: "Return pack",
-  unpack: "Unpack / reset",
+  during: "During",
+  return: "Repack",
+  unpack: "Unpack",
 };

@@ -47,7 +47,7 @@ export default function Modules() {
           <button className="btn-ghost mb-1 -ml-2" onClick={() => navigate({ name: "home" })}>
             ← Trips
           </button>
-          <h1 className="text-xl font-bold">Modules</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Modules</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">Reusable groups of items.</p>
         </div>
         <button className="btn-primary" onClick={() => setCreating(true)}>
@@ -101,7 +101,7 @@ export default function Modules() {
           {filtered.map((m) => (
             <li key={m.id} className="card p-3">
               <button className="w-full text-left" onClick={() => setOpenId(m.id)}>
-                <div className="font-semibold text-slate-900 dark:text-slate-100">{m.name}</div>
+                <div className="text-base font-semibold text-slate-900 dark:text-slate-100">{m.name}</div>
                 {m.description && (
                   <div className="text-xs text-slate-500 mt-0.5 dark:text-slate-400">{m.description}</div>
                 )}
