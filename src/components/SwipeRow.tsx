@@ -87,7 +87,7 @@ export function SwipeRow({
       : "bg-slate-500";
 
   return (
-    <div className="relative overflow-hidden rounded-2xl">
+    <div className={`relative overflow-hidden rounded-2xl ${actionBg}`}>
       <div
         className="absolute inset-y-0 right-0 flex items-stretch"
         style={{ width: ACTION_WIDTH }}
