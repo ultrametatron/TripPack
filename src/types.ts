@@ -217,8 +217,8 @@ export const BAG_TYPE_LABEL: Record<BagType, string> = {
 };
 
 export const PHASE_LABEL: Record<LifecyclePhase, string> = {
-  plan: "Plan",
-  pack: "Pack",
+  plan: "Plan & Pack",
+  pack: "Plan & Pack",
   during: "During",
   return: "Repack",
   unpack: "Unpack",

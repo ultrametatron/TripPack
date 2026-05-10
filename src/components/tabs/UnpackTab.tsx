@@ -1,10 +1,29 @@
 import { useMemo, useState } from "react";
-import type { Bag, Item, Trip } from "../../types";
+import type { Bag, Item, ItemStatus, Trip } from "../../types";
 import { useStore } from "../../store";
 import { SectionHeader, EmptyState, Modal, Badge } from "../ui";
 import { STATUS_LABEL } from "../../types";
 import { STATUS_TONE } from "../ui";
 import { navigate } from "../../App";
+
+const NEEDS_ATTENTION = new Set<ItemStatus>([
+  "planned",
+  "packed",
+  "packed_from_home",
+  "bought_during_trip",
+  "brought_back",
+  "laundry_dirty",
+  "moved_between_bags",
+]);
+
+const RESOLVED = new Set<ItemStatus>([
+  "unpacked",
+  "consumed",
+  "gifted",
+  "thrown_away",
+  "left_at_destination",
+  "restock_needed",
+]);
 
 export default function UnpackTab({
   trip,
@@ -15,36 +34,38 @@ export default function UnpackTab({
   bags: Bag[];
   items: Item[];
 }) {
-  const { setItemStatus, deleteTrip, saveTripAsModule } = useStore();
+  const { setItemStatus, setItemsStatus, deleteTrip, saveTripAsModule } = useStore();
   const [confirmClear, setConfirmClear] = useState(false);
   const [savingModule, setSavingModule] = useState(false);
   const [moduleName, setModuleName] = useState(trip.name + " template");
 
-  const groups = useMemo(() => {
-    const broughtBack = items.filter((i) => i.status === "brought_back");
-    const laundry = items.filter((i) => i.status === "laundry_dirty");
-    const lost = items.filter((i) => i.status === "lost_unaccounted_for");
-    const consumables = items.filter(
-      (i) =>
-        (i.journeyRole === "consumable" || i.status === "consumed") &&
-        i.status !== "restock_needed"
-    );
-    return { broughtBack, laundry, lost, consumables };
-  }, [items]);
+  const lost = useMemo(
+    () => items.filter((i) => i.status === "lost_unaccounted_for"),
+    [items]
+  );
+  const restock = useMemo(
+    () => items.filter((i) => i.status === "restock_needed"),
+    [items]
+  );
+  const attention = useMemo(
+    () => items.filter((i) => NEEDS_ATTENTION.has(i.status)),
+    [items]
+  );
+  const resolved = useMemo(
+    () => items.filter((i) => RESOLVED.has(i.status) && i.status !== "restock_needed"),
+    [items]
+  );
 
-  const empty =
-    groups.broughtBack.length +
-      groups.laundry.length +
-      groups.lost.length +
-      groups.consumables.length ===
-    0;
+  const bagGroups = useMemo(() => groupByBag(attention, bags), [attention, bags]);
+  const empty = attention.length + lost.length + restock.length === 0;
 
   return (
     <div className="space-y-3 pb-6">
       <div className="card p-3 bg-ok-50 border-ok-100 dark:bg-ok-500/15 dark:border-ok-500/30">
-        <div className="text-sm font-semibold text-ok-600 dark:text-ok-500">Unpack & reset</div>
+        <div className="text-sm font-semibold text-ok-600 dark:text-ok-500">Unpack &amp; reset</div>
         <div className="text-xs text-ok-600/80 dark:text-ok-500/80">
-          Mark unpacked, finish laundry, restock consumables, or save reusable modules.
+          Mark a whole bag unpacked or laundered with one tap. Per-item actions
+          are still available below each item.
         </div>
       </div>
 
@@ -55,60 +76,70 @@ export default function UnpackTab({
         />
       )}
 
-      <UnpackSection
-        title="Brought back — to unpack"
-        items={groups.broughtBack}
-        bags={bags}
-        renderActions={(it) => (
-          <button className="chip text-xs bg-ok-500 border-ok-500 text-white" onClick={() => setItemStatus(it.id, "unpacked")}>
-            Mark unpacked
-          </button>
-        )}
-      />
-      <UnpackSection
-        title="Laundry"
-        items={groups.laundry}
-        bags={bags}
-        renderActions={(it) => (
-          <button className="chip text-xs bg-ok-500 border-ok-500 text-white" onClick={() => setItemStatus(it.id, "unpacked")}>
-            Laundry done
-          </button>
-        )}
-      />
-      <UnpackSection
-        title="Lost / unaccounted"
-        items={groups.lost}
-        bags={bags}
-        renderActions={(it) => (
-          <>
-            <button
-              className="chip text-xs bg-white border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200"
-              onClick={() => setItemStatus(it.id, "left_at_destination")}
-            >
-              Confirm left
-            </button>
-            <button
-              className="chip text-xs bg-ok-500 border-ok-500 text-white"
-              onClick={() => setItemStatus(it.id, "unpacked")}
-            >
-              Found / unpacked
-            </button>
-          </>
-        )}
-      />
-      <UnpackSection
-        title="Consumables to restock"
-        items={groups.consumables}
-        bags={bags}
-        renderActions={(it) => (
-          <button
-            className="chip text-xs bg-warn-500 border-warn-500 text-white"
-            onClick={() => setItemStatus(it.id, "restock_needed")}
-          >
-            Restock needed
-          </button>
-        )}
-      />
+      {bagGroups.length > 0 && (
+        <section>
+          <SectionHeader title="By bag" count={attention.length} />
+          <div className="space-y-4">
+            {bagGroups.map(({ bag, list }) => (
+              <BagBlock
+                key={bag?.id ?? "unassigned"}
+                bag={bag}
+                list={list}
+                onUnpackAll={(ids) => setItemsStatus(ids, "unpacked")}
+                onLaundryAll={(ids) => setItemsStatus(ids, "laundry_dirty")}
+                onSetStatus={setItemStatus}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {lost.length > 0 && (
+        <section>
+          <SectionHeader title="Lost / unaccounted" count={lost.length} tone="danger" />
+          <ul className="space-y-2">
+            {lost.map((it) => (
+              <li key={it.id} className="card p-3">
+                <ItemHead item={it} bags={bags} />
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  <button
+                    className="chip text-xs bg-white border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200"
+                    onClick={() => setItemStatus(it.id, "left_at_destination")}
+                  >
+                    Confirm left
+                  </button>
+                  <button
+                    className="chip text-xs bg-ok-500 border-ok-500 text-white"
+                    onClick={() => setItemStatus(it.id, "unpacked")}
+                  >
+                    Found / unpacked
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {restock.length > 0 && (
+        <section>
+          <SectionHeader title="Restock needed" count={restock.length} tone="warn" />
+          <ul className="space-y-2">
+            {restock.map((it) => (
+              <li key={it.id} className="card p-3">
+                <ItemHead item={it} bags={bags} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {resolved.length > 0 && (
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          {resolved.length} item{resolved.length === 1 ? "" : "s"} already resolved
+          this trip.
+        </p>
+      )}
 
       <div className="card p-3 mt-4">
         <div className="text-base font-semibold text-slate-900 dark:text-slate-100">Reuse this trip</div>
@@ -190,42 +221,109 @@ export default function UnpackTab({
   );
 }
 
-function UnpackSection({
-  title,
-  items,
-  bags,
-  renderActions,
+function BagBlock({
+  bag,
+  list,
+  onUnpackAll,
+  onLaundryAll,
+  onSetStatus,
 }: {
-  title: string;
-  items: Item[];
-  bags: Bag[];
-  renderActions: (item: Item) => React.ReactNode;
+  bag: Bag | null;
+  list: Item[];
+  onUnpackAll: (itemIds: string[]) => void;
+  onLaundryAll: (itemIds: string[]) => void;
+  onSetStatus: (itemId: string, status: ItemStatus) => void;
 }) {
-  if (items.length === 0) return null;
+  const ids = list.map((i) => i.id);
+  const title = bag ? bag.name : "Unassigned";
   return (
-    <section>
-      <SectionHeader title={title} count={items.length} />
+    <div>
+      <div className="flex items-center gap-2 mb-2">
+        <h3 className="flex-1 min-w-0 truncate text-base font-semibold text-slate-900 dark:text-slate-100">
+          {title}
+        </h3>
+        <span className="text-xs text-slate-500 dark:text-slate-400 font-medium tabular-nums">
+          {list.length}
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-1.5 mb-2">
+        <button
+          className="chip !py-1 !min-h-0 bg-ok-500 border-ok-500 text-white text-xs"
+          onClick={() => onUnpackAll(ids)}
+        >
+          Unpack all
+        </button>
+        <button
+          className="chip !py-1 !min-h-0 bg-warn-500 border-warn-500 text-white text-xs"
+          onClick={() => onLaundryAll(ids)}
+        >
+          All to laundry
+        </button>
+      </div>
       <ul className="space-y-2">
-        {items.map((it) => (
+        {list.map((it) => (
           <li key={it.id} className="card p-3">
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <div className="text-base font-medium text-slate-900 truncate dark:text-slate-100">
-                  {it.name}
-                  {it.quantity > 1 && (
-                    <span className="ml-1 text-slate-400 font-normal dark:text-slate-500">×{it.quantity}</span>
-                  )}
-                </div>
-                <div className="text-xs text-slate-500 truncate dark:text-slate-400">
-                  {bags.find((b) => b.id === it.bagId)?.name ?? "Unassigned"}
-                </div>
-              </div>
-              <Badge tone={STATUS_TONE[it.status]}>{STATUS_LABEL[it.status]}</Badge>
+            <ItemHead item={it} bags={bag ? [bag] : []} />
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              <button
+                className="chip text-xs bg-ok-500 border-ok-500 text-white"
+                onClick={() => onSetStatus(it.id, "unpacked")}
+              >
+                Mark unpacked
+              </button>
+              <button
+                className="chip text-xs bg-warn-500 border-warn-500 text-white"
+                onClick={() => onSetStatus(it.id, "laundry_dirty")}
+              >
+                Laundry
+              </button>
+              {it.journeyRole === "consumable" && (
+                <button
+                  className="chip text-xs bg-white border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200"
+                  onClick={() => onSetStatus(it.id, "restock_needed")}
+                >
+                  Restock
+                </button>
+              )}
             </div>
-            <div className="mt-2 flex flex-wrap gap-1.5">{renderActions(it)}</div>
           </li>
         ))}
       </ul>
-    </section>
+    </div>
   );
+}
+
+function ItemHead({ item, bags }: { item: Item; bags: Bag[] }) {
+  const bag = bags.find((b) => b.id === item.bagId);
+  return (
+    <div className="flex items-start justify-between gap-2">
+      <div className="min-w-0">
+        <div className="text-base font-medium text-slate-900 truncate dark:text-slate-100">
+          {item.name}
+          {item.quantity > 1 && (
+            <span className="ml-1 text-slate-400 font-normal dark:text-slate-500">
+              ×{item.quantity}
+            </span>
+          )}
+        </div>
+        {bag && (
+          <div className="text-xs text-slate-500 truncate dark:text-slate-400">{bag.name}</div>
+        )}
+      </div>
+      <Badge tone={STATUS_TONE[item.status]}>{STATUS_LABEL[item.status]}</Badge>
+    </div>
+  );
+}
+
+function groupByBag(items: Item[], bags: Bag[]) {
+  const groups: { bag: Bag | null; list: Item[] }[] = bags.map((b) => ({ bag: b, list: [] }));
+  const unassigned: { bag: Bag | null; list: Item[] } = { bag: null, list: [] };
+  for (const it of items) {
+    const g = groups.find((x) => x.bag?.id === it.bagId);
+    if (g) g.list.push(it);
+    else unassigned.list.push(it);
+  }
+  const result = groups.filter((g) => g.list.length > 0);
+  if (unassigned.list.length > 0) result.push(unassigned);
+  return result;
 }

@@ -38,6 +38,7 @@ type Action =
   | { type: "DELETE_ITEM"; itemId: string }
   | { type: "BULK_ADD_ITEMS"; items: Item[] }
   | { type: "BULK_ADD_BAGS"; bags: Bag[] }
+  | { type: "BULK_SET_ITEM_STATUS"; itemIds: string[]; status: ItemStatus }
   | { type: "ADD_MODULE"; module: Module }
   | { type: "UPDATE_MODULE"; module: Module }
   | { type: "DELETE_MODULE"; moduleId: string };
@@ -167,6 +168,16 @@ function reducer(state: AppState, action: Action): AppState {
         ),
       };
     }
+    case "BULK_SET_ITEM_STATUS": {
+      const ids = new Set(action.itemIds);
+      const now = Date.now();
+      return {
+        ...state,
+        items: state.items.map((i) =>
+          ids.has(i.id) ? { ...i, status: action.status, updatedAt: now } : i
+        ),
+      };
+    }
     case "UPDATE_ITEM":
       return {
         ...state,
@@ -209,6 +220,7 @@ interface StoreApi {
   updateItem(item: Item): void;
   deleteItem(itemId: string): void;
   setItemStatus(itemId: string, status: ItemStatus): void;
+  setItemsStatus(itemIds: string[], status: ItemStatus): void;
   setItemBag(itemId: string, bagId: string | undefined): void;
   // modules
   addModule(name: string, description?: string): Module;
@@ -249,12 +261,28 @@ function ensureSeed(state: AppState): AppState {
   };
 }
 
+/**
+ * Normalize legacy phase values from older app versions:
+ *  - "pack" → "plan" (Plan and Pack tabs were merged in round 5)
+ */
+function migratePhases(state: AppState): AppState {
+  let changed = false;
+  const trips = state.trips.map((t) => {
+    if (t.currentPhase === "pack") {
+      changed = true;
+      return { ...t, currentPhase: "plan" as const };
+    }
+    return t;
+  });
+  return changed ? { ...state, trips } : state;
+}
+
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initial);
 
   useEffect(() => {
     const loaded = loadState();
-    const next = ensureSeed(loaded ?? initial);
+    const next = migratePhases(ensureSeed(loaded ?? initial));
     dispatch({ type: "HYDRATE", payload: next });
   }, []);
 
@@ -325,6 +353,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         const item = state.items.find((i) => i.id === itemId);
         if (!item) return;
         dispatch({ type: "UPDATE_ITEM", item: { ...item, status, updatedAt: Date.now() } });
+      },
+      setItemsStatus(itemIds, status) {
+        if (itemIds.length === 0) return;
+        dispatch({ type: "BULK_SET_ITEM_STATUS", itemIds, status });
       },
       setItemBag(itemId, bagId) {
         const item = state.items.find((i) => i.id === itemId);

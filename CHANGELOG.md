@@ -5,6 +5,51 @@ All notable changes to TripPack are documented here. Newest entries first.
 The project does not yet publish versioned releases — entries are grouped by
 the commit batch (and date) that introduced them.
 
+## 2026-05-10 — Plan & Pack consolidation, collapsible bags, swipe-to-delete, batch actions
+
+A round focused on reducing repetitive item-level tapping in favour of
+batch operations at the bag level.
+
+### Added
+- **`PlanPackTab`** combines the old Plan and Pack tabs. Header actions
+  (Apply modules / Add bag / Save as module), filter chips
+  (All / Unpacked / Critical / Unassigned), group-by toggle (Bag /
+  Category), and the quick-add bar all live in one place.
+- **Collapsible bag sections** on Plan & Pack — tap the bag header to
+  hide / show its items. Chevron rotates to indicate state.
+- **Bag-level batch buttons** on Plan & Pack:
+  - **Pack all (N)** — packs every unpacked item in the bag in one tap.
+  - **Unpack all (N)** — appears when the whole bag is packed; reverts
+    them all to `planned`.
+- **Swipe-to-delete on item rows** — new `SwipeRow` wrapper using pointer
+  events (no library). Swipe left to reveal a red Delete button; tap to
+  remove. Tap the row to snap closed without deleting. Vertical scroll
+  remains usable.
+- **`BULK_SET_ITEM_STATUS` reducer action** + `setItemsStatus(itemIds, status)`
+  store API. Used by every batch button.
+
+### Changed
+- **Lifecycle is now four tabs**: Plan & Pack · During · Repack · Unpack
+  (was five). The internal `LifecyclePhase` enum still includes `"pack"`
+  for backwards compatibility, but on hydrate any trip with
+  `currentPhase: "pack"` is migrated to `"plan"` automatically (next save
+  persists it).
+- **`UnpackTab` restructured around bags.** Items needing attention are
+  grouped under their bag with **Unpack all** and **All to laundry**
+  buttons per bag. Lost / unaccounted and Restock-needed items keep their
+  own small sections at the bottom (only render if any). The "Reuse this
+  trip" card stays at the bottom.
+
+### Removed
+- `src/components/tabs/PlanTab.tsx`, `src/components/tabs/PackTab.tsx`.
+
+### Internal
+- New files: `src/components/tabs/PlanPackTab.tsx`, `src/components/SwipeRow.tsx`.
+- `migratePhases` in `src/store.ts` runs alongside `ensureSeed` on load.
+- No new dependencies.
+
+---
+
 ## 2026-05-10 — Rename to PacTrac, polish + typography pass
 
 Round of polish in response to a thorough mobile test pass. Includes a brand

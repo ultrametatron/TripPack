@@ -1,7 +1,7 @@
 # PacTrac
 
 Track everything you pack. A mobile-first packing planner that follows the
-whole trip lifecycle: **Plan → Pack → During → Repack → Unpack**.
+whole trip lifecycle: **Plan & Pack → During → Repack → Unpack**.
 
 > **Heads up:** PacTrac is a fully client-side app with no backend or
 > authentication. Each browser keeps its own data. Multiple users visiting the
@@ -53,12 +53,11 @@ branch → `gh-pages` / `(root)`** and re-run the workflow.
 | --- | --- |
 | **Trips** | Create, clone, edit, delete. Cards show progress, critical-missing, lost / unassigned / unresolved counts. A "How it works →" link below the tagline opens a 7-step onboarding modal. |
 | **Modules** | Reusable item bundles. Create / rename / duplicate / delete; per-item editor for qty, category, default bag, journey role, critical, return-expected. **Search** at the top of the Modules screen filters by name or description. Twelve seeded by default. |
-| **Lifecycle** | Five tabs per trip: Plan → Pack → During → Repack → Unpack. |
-| **Plan** | Apply one or more modules, add bags (custom names), quick-add items, save the current item list as a new module. |
-| **Pack** | Checklist view with one-tap packed toggle. Filters: All / Unpacked / Critical / Unassigned. Group by bag or category. |
+| **Lifecycle** | Four tabs per trip: Plan & Pack → During → Repack → Unpack. |
+| **Plan & Pack** | Apply modules, add bags, quick-add items, save trip as a module. Filter (All / Unpacked / Critical / Unassigned), group by bag or category. Tap a bag header to collapse it; **Pack all** / **Unpack all** per bag for batch updates. Swipe an item left to delete. |
 | **During** | Quick status chips: Consumed / Gifted / Laundry / Trashed / Left / Lost. Move-bag dialog. Add bought items with a return-expected toggle. |
 | **Repack** | Distinct mode with sections for Must bring back / Not expected / Bought / Dirty / Lost / Needs bag, each with one-tap actions. |
-| **Unpack** | Mark unpacked / laundry-done / restock-needed; save as module; clear trip. |
+| **Unpack** | Items grouped by bag with **Unpack all** and **All to laundry** batch buttons. Lost / restock-needed items in dedicated side sections. Save trip as module or clear trip from the bottom card. |
 | **Stats** | Per-trip summary cards at the bottom of every tab: packed progress, critical, by bag (mini bars), statuses, top categories, journey roles, return-expected, on-the-trip totals. |
 | **You** | Bottom-nav tab (`👤`) holding theme toggle (Auto / Light / Dark), JSON Export / Import, Clear all, PIN set / change / remove / forget, plus an About section. |
 
@@ -161,9 +160,9 @@ src/
     TripStatsCards.tsx       per-trip summary card grid
     HowItWorks.tsx           7-step onboarding modal
     ModulePickerRow.tsx      module picker row with item preview
+    SwipeRow.tsx             pointer-event swipe-to-action wrapper
     tabs/
-      PlanTab.tsx
-      PackTab.tsx
+      PlanPackTab.tsx
       DuringTripTab.tsx
       ReturnPackTab.tsx
       UnpackTab.tsx

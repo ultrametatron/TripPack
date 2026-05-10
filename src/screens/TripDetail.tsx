@@ -10,14 +10,13 @@ import {
   ACTIVITY_LABEL,
 } from "../types";
 import { formatDateRange, summarizeTrip, tripDurationDays } from "../utils/tripSummary";
-import PlanTab from "../components/tabs/PlanTab";
-import PackTab from "../components/tabs/PackTab";
+import PlanPackTab from "../components/tabs/PlanPackTab";
 import DuringTripTab from "../components/tabs/DuringTripTab";
 import ReturnPackTab from "../components/tabs/ReturnPackTab";
 import UnpackTab from "../components/tabs/UnpackTab";
 import TripStatsCards from "../components/TripStatsCards";
 
-const PHASES: LifecyclePhase[] = ["plan", "pack", "during", "return", "unpack"];
+const PHASES: LifecyclePhase[] = ["plan", "during", "return", "unpack"];
 
 export default function TripDetail({ tripId }: { tripId: string }) {
   const data = useTrip(tripId);
@@ -95,8 +94,9 @@ export default function TripDetail({ tripId }: { tripId: string }) {
       <PhaseTabs current={trip.currentPhase} onChange={(p) => setPhase(trip.id, p)} />
 
       <div className="px-4 pt-3">
-        {trip.currentPhase === "plan" && <PlanTab trip={trip} bags={bags} items={items} />}
-        {trip.currentPhase === "pack" && <PackTab trip={trip} bags={bags} items={items} />}
+        {(trip.currentPhase === "plan" || trip.currentPhase === "pack") && (
+          <PlanPackTab trip={trip} bags={bags} items={items} />
+        )}
         {trip.currentPhase === "during" && <DuringTripTab trip={trip} bags={bags} items={items} />}
         {trip.currentPhase === "return" && <ReturnPackTab trip={trip} bags={bags} items={items} />}
         {trip.currentPhase === "unpack" && <UnpackTab trip={trip} bags={bags} items={items} />}
