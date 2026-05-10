@@ -52,9 +52,9 @@ export function ItemRow({
     <div
       className={`card p-3 ${
         isLost
-          ? "border-danger-500/60 bg-danger-50/40 dark:bg-danger-500/10 dark:border-danger-500/40"
+          ? "border-danger-500/60 bg-danger-50 dark:bg-red-950 dark:border-danger-500/40"
           : isCriticalMissing
-          ? "border-warn-500/60 bg-warn-50/40 dark:bg-warn-500/10 dark:border-warn-500/40"
+          ? "border-warn-500/60 bg-warn-50 dark:bg-amber-950 dark:border-warn-500/40"
           : ""
       }`}
     >
