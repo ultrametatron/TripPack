@@ -10,6 +10,7 @@ import {
   type TransportMode,
   type TripType,
 } from "../types";
+import { getDateRangeError, isValidDateRange, normalizeTripText } from "../utils/validation";
 
 export default function CreateTrip() {
   const { addTrip, applyModulesToTrip, state } = useStore();
@@ -28,15 +29,17 @@ export default function CreateTrip() {
 
   const [createdTripId, setCreatedTripId] = useState<string | null>(null);
   const [selectedModuleIds, setSelectedModuleIds] = useState<string[]>([]);
+  const dateRangeError = getDateRangeError(startDate, endDate);
+  const trimmedName = normalizeTripText(name);
 
   const toggleActivity = (a: Activity) =>
     setActivities((prev) => (prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a]));
 
   const onCreate = () => {
-    if (!name.trim()) return;
+    if (!trimmedName || !isValidDateRange(startDate, endDate)) return;
     const trip = addTrip({
-      name: name.trim(),
-      destination: destination.trim(),
+      name: trimmedName,
+      destination: normalizeTripText(destination),
       startDate,
       endDate,
       tripType,
@@ -45,7 +48,7 @@ export default function CreateTrip() {
       laundryAccess,
       activities,
       takingGiftsOrFood,
-      notes: notes.trim(),
+      notes: normalizeTripText(notes),
     });
     setCreatedTripId(trip.id);
   };
@@ -177,6 +180,7 @@ export default function CreateTrip() {
             </Field>
           </div>
         </div>
+        {dateRangeError && <p className="text-sm text-danger-600 -mt-1">{dateRangeError}</p>}
 
         <Field label="Trip type">
           <ChipGroup
@@ -251,7 +255,11 @@ export default function CreateTrip() {
         <button className="btn-secondary flex-1" onClick={() => navigate({ name: "home" })}>
           Cancel
         </button>
-        <button className="btn-primary flex-1" onClick={onCreate} disabled={!name.trim()}>
+        <button
+          className="btn-primary flex-1"
+          onClick={onCreate}
+          disabled={!trimmedName || !isValidDateRange(startDate, endDate)}
+        >
           Create trip
         </button>
       </div>

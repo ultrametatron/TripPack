@@ -21,6 +21,7 @@ import DuringTripTab from "../components/tabs/DuringTripTab";
 import ReturnPackTab from "../components/tabs/ReturnPackTab";
 import UnpackTab from "../components/tabs/UnpackTab";
 import TripStatsCards from "../components/TripStatsCards";
+import { getDateRangeError, isValidDateRange, normalizeTripText } from "../utils/validation";
 
 const PHASES: LifecyclePhase[] = ["plan", "pack", "during", "return", "unpack"];
 
@@ -202,6 +203,9 @@ function EditTripModal({
   const [notes, setNotes] = useState(trip?.notes ?? "");
 
   const allActs = useMemo(() => Object.entries(ACTIVITY_LABEL) as [Activity, string][], []);
+  const trimmedName = normalizeTripText(name);
+  const dateRangeError = getDateRangeError(startDate, endDate);
+  const canSave = Boolean(trimmedName) && isValidDateRange(startDate, endDate);
 
   if (!trip) return null;
 
@@ -217,8 +221,18 @@ function EditTripModal({
           </button>
           <button
             className="btn-primary"
+            disabled={!canSave}
             onClick={() => {
-              updateTrip({ ...trip, name, destination, startDate, endDate, activities, notes });
+              if (!canSave) return;
+              updateTrip({
+                ...trip,
+                name: trimmedName,
+                destination: normalizeTripText(destination),
+                startDate,
+                endDate,
+                activities,
+                notes: normalizeTripText(notes),
+              });
               onClose();
             }}
           >
@@ -231,6 +245,7 @@ function EditTripModal({
         <div>
           <label className="label">Name</label>
           <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
+          {!trimmedName && <p className="text-sm text-danger-600 mt-1">Trip name is required.</p>}
         </div>
         <div>
           <label className="label">Destination</label>
@@ -260,6 +275,7 @@ function EditTripModal({
             />
           </div>
         </div>
+        {dateRangeError && <p className="text-sm text-danger-600 -mt-1">{dateRangeError}</p>}
         <div>
           <label className="label">Activities</label>
           <div className="flex flex-wrap gap-2">
