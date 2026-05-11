@@ -9,7 +9,12 @@ import {
   type Activity,
   ACTIVITY_LABEL,
 } from "../types";
-import { formatDateRange, summarizeTrip, tripDurationDays } from "../utils/tripSummary";
+import {
+  formatDateRange,
+  packedCompletionLabel,
+  summarizeTrip,
+  tripDurationDays,
+} from "../utils/tripSummary";
 import PlanTab from "../components/tabs/PlanTab";
 import PackTab from "../components/tabs/PackTab";
 import DuringTripTab from "../components/tabs/DuringTripTab";
@@ -69,7 +74,7 @@ export default function TripDetail({ tripId }: { tripId: string }) {
         <div className="mt-3">
           <div className="flex items-center justify-between text-xs text-slate-500 mb-1 dark:text-slate-400">
             <span>
-              {summary.packed} / {summary.total} packed
+              {summary.packed} / {summary.total} {packedCompletionLabel(trip.currentPhase)}
             </span>
             {summary.criticalMissing > 0 && (
               <span className="text-danger-600 font-semibold dark:text-danger-500">
@@ -101,7 +106,7 @@ export default function TripDetail({ tripId }: { tripId: string }) {
         {trip.currentPhase === "return" && <ReturnPackTab trip={trip} bags={bags} items={items} />}
         {trip.currentPhase === "unpack" && <UnpackTab trip={trip} bags={bags} items={items} />}
 
-        <TripStatsCards summary={summary} />
+        <TripStatsCards summary={summary} phase={trip.currentPhase} />
       </div>
 
       {editing && (
