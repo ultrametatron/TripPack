@@ -25,11 +25,8 @@ export default function Home() {
               Track everything you pack.
             </p>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="shrink-0">
             <ThemeToggle />
-            <button className="btn-primary" onClick={() => navigate({ name: "create" })}>
-              + New
-            </button>
           </div>
         </div>
         <button
@@ -45,12 +42,7 @@ export default function Home() {
       {trips.length === 0 ? (
         <EmptyState
           title="No trips yet"
-          body="Create your first trip and apply a packing module."
-          action={
-            <button className="btn-primary" onClick={() => navigate({ name: "create" })}>
-              + Create trip
-            </button>
-          }
+          body="Tap New in the bar below to create your first trip."
         />
       ) : (
         <ul className="space-y-3">
