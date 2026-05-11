@@ -23,6 +23,10 @@ function asString(value: unknown, section: string, field: string): string {
   assert(typeof value === "string" && value.length > 0, section, `${field} must be a non-empty string.`);
   return value;
 }
+function asAnyString(value: unknown, section: string, field: string): string {
+  assert(typeof value === "string", section, `${field} must be a string.`);
+  return value;
+}
 function asNumber(value: unknown, section: string, field: string): number {
   assert(typeof value === "number" && Number.isFinite(value), section, `${field} must be a finite number.`);
   return value;
@@ -96,9 +100,9 @@ function validateTrip(trip: unknown, idx: number): Trip {
   return {
     id: asString(trip.id, section, "id"),
     name: asString(trip.name, section, "name"),
-    destination: asString(trip.destination, section, "destination"),
-    startDate: asString(trip.startDate, section, "startDate"),
-    endDate: asString(trip.endDate, section, "endDate"),
+    destination: asAnyString(trip.destination, section, "destination"),
+    startDate: asAnyString(trip.startDate, section, "startDate"),
+    endDate: asAnyString(trip.endDate, section, "endDate"),
     tripType: tripType as Trip["tripType"],
     transportMode: transportMode as Trip["transportMode"],
     remoteWorkRequired: asBoolean(trip.remoteWorkRequired, section, "remoteWorkRequired"),
