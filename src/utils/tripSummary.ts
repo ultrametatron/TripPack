@@ -3,6 +3,7 @@ import type {
   Category,
   Item,
   ItemStatus,
+  LifecyclePhase,
   JourneyRole,
   Trip,
 } from "../types";
@@ -35,9 +36,27 @@ export interface TripSummary {
   byBag: BagBreakdown[];
 }
 
-const PACKED_STATUSES = new Set<ItemStatus>(["packed", "packed_from_home"]);
+// Outbound phases count only outbound packed states.
+const OUTBOUND_PACKED_STATUSES = new Set<ItemStatus>(["packed", "packed_from_home"]);
+// Return phases count outbound packed states plus anything explicitly brought back.
+const RETURN_PACKED_STATUSES = new Set<ItemStatus>([
+  "packed",
+  "packed_from_home",
+  "brought_back",
+]);
+
+function getPackedStatusesForPhase(phase: LifecyclePhase): ReadonlySet<ItemStatus> {
+  return phase === "return" || phase === "unpack"
+    ? RETURN_PACKED_STATUSES
+    : OUTBOUND_PACKED_STATUSES;
+}
+
+export function packedCompletionLabel(phase: LifecyclePhase): string {
+  return phase === "return" || phase === "unpack" ? "accounted" : "packed";
+}
 
 export function summarizeTrip(trip: Trip, items: Item[], bags: Bag[] = []): TripSummary {
+  const packedStatuses = getPackedStatusesForPhase(trip.currentPhase);
   const total = items.length;
   let packed = 0;
   let unassigned = 0;
@@ -67,13 +86,13 @@ export function summarizeTrip(trip: Trip, items: Item[], bags: Bag[] = []): Trip
   };
 
   for (const i of items) {
-    const isPacked = PACKED_STATUSES.has(i.status);
+    const isPacked = packedStatuses.has(i.status);
     if (isPacked) packed++;
     if (!i.bagId && i.status !== "consumed" && i.status !== "thrown_away") unassigned++;
     if (i.status === "lost_unaccounted_for") lost++;
     if (i.critical) {
       criticalTotal++;
-      if (isPacked || i.status === "brought_back") criticalPacked++;
+      if (isPacked) criticalPacked++;
       else criticalMissing++;
     }
     if (i.status === "bought_during_trip") bought++;

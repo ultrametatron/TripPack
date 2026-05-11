@@ -5,11 +5,18 @@ import {
   type Category,
   type ItemStatus,
   type JourneyRole,
+  type LifecyclePhase,
 } from "../types";
 import { Badge, JOURNEY_TONE, ProgressBar, STATUS_TONE } from "./ui";
-import type { TripSummary } from "../utils/tripSummary";
+import { packedCompletionLabel, type TripSummary } from "../utils/tripSummary";
 
-export default function TripStatsCards({ summary }: { summary: TripSummary }) {
+export default function TripStatsCards({
+  summary,
+  phase,
+}: {
+  summary: TripSummary;
+  phase: LifecyclePhase;
+}) {
   if (summary.total === 0) return null;
 
   const topStatuses = (Object.entries(summary.byStatus) as [ItemStatus, number][])
@@ -28,7 +35,7 @@ export default function TripStatsCards({ summary }: { summary: TripSummary }) {
         Trip stats
       </h2>
       <div className="grid grid-cols-2 gap-3">
-        <Card title="Packed" full>
+        <Card title={packedCompletionLabel(phase) === "packed" ? "Packed" : "Accounted"} full>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-bold tabular-nums">
               {summary.packed}
@@ -41,7 +48,7 @@ export default function TripStatsCards({ summary }: { summary: TripSummary }) {
             <ProgressBar value={summary.packed} max={summary.total || 1} />
           </div>
           <div className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-            {Math.round((summary.packed / summary.total) * 100)}% complete
+            {Math.round((summary.packed / summary.total) * 100)}% {packedCompletionLabel(phase)}
           </div>
         </Card>
 
@@ -68,7 +75,7 @@ export default function TripStatsCards({ summary }: { summary: TripSummary }) {
               </div>
               {summary.criticalMissing > 0 && (
                 <div className="text-xs text-danger-600 dark:text-danger-500 font-semibold mt-1">
-                  {summary.criticalMissing} still to pack
+                  {summary.criticalMissing} still to {packedCompletionLabel(phase)}
                 </div>
               )}
               {summary.criticalMissing === 0 && (
